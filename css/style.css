@@ -1,0 +1,89 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /*width contiene gia padding e margin*/
+    font-family:'Alkatra';;
+}
+.logo{
+    height:75px;
+    width:95%;
+    margin:0 auto;
+    background-color: coral;
+}
+h1{
+    text-align: center;
+    font-family: 'Brush Script MT', cursive;
+    font-size: 70px;
+    color: #ffcc00;
+    text-shadow: 3px 3px 0px #000000;
+}
+.recap-but{
+    text-align: center;
+}
+.rec-but{
+    color: #d880fd;
+    background-color: #ffc0e6;
+    width: 20%;
+    height: 35px;
+    font-size: 100%;
+    border-radius: 10px;
+    font-family:'Alkatra';
+    font-size: 22px;
+    font-weight: bold;
+    
+    
+}
+
+.info{
+    margin:0 auto;
+    text-align: center;
+}
+.last-read{
+    width:50%;
+    display:inline;
+    text-align: center;
+}
+.count{
+    width:50%;
+    display: inline-table;
+    text-align: right;
+}
+
+table{
+    margin: 0 auto;
+    width:90%;
+}
+td{
+    margin:50px;
+}
+
+.but{
+    color: #007eac;
+    background-color: #98d0fe;
+    width: 100%;
+    height: 45px;
+    font-size: 100%;
+    border-radius: 10px;
+    font-family:'Alkatra';
+    font-size: 22px;
+    font-weight: bold;
+}
+.bubble{
+    height :170px;
+    width: 250px;
+
+    align-content: center;
+
+    border-radius: 50% 30% 20%;
+    border-width: 5px 3px;
+    border-color: red blue green;
+    border-style: solid;
+    
+}
+/*display:none - è come se non esistesse, non occupa piu lo spazio, 
+visibility: hidden - continua ad occupare spazio,
+display: inline-block - come se fosse inline ma posso usare padding e margin*/
+.text-bub{
+    
+    text-align: center;
+}
