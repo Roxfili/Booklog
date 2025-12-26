@@ -5,10 +5,10 @@
     font-family:'Alkatra';;
 }
 main{
-    width:95%;
+    width:100%;
     margin: 0 auto;
     background-image: url(../img/wallpaper1.jpg);
-    background-size:cover;
+    background-size:contain;
     background-repeat: repeat-x;
     background-repeat: repeat-y;
     
@@ -16,6 +16,7 @@ main{
 header{
     height:75px;
     width:95%;
+    visibility:hidden;
     margin:0 auto;
     background-color: rgb(142, 198, 255);
     background-image: url(../img/dragon.png);
@@ -38,8 +39,52 @@ header{
     background-color: rgb(250, 235, 215, 0.8);
     border-radius: 20px;
 }
+/* .drag{
+    width:200px;
+    height:200px;
+    display:inline-block;
+    align-self:center;
+    background-image: url(../img/dragon.png);
+    background-size:contain;
+    background-position: left center;
+    background-repeat: no-repeat;
+}
 h1{
+    display: inline-block;
     text-align: center;
+    font-family: 'Brush Script MT', cursive;
+    font-size: 70px;
+    color: #ffcc00;
+    text-shadow: 3px 3px 0px #000000;
+} */
+/* Il contenitore che allinea tutto */
+.header-container {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center; /* Centra il gruppo nella pagina */
+    align-items: center;     /* Allinea dritti i draghi e il testo verticalmente */
+    gap: 120px;               /* Qui decidi la DISTANZA tra immagini e titolo */
+    margin: 20px 0;
+}
+
+/* Le immagini dei draghi */
+.drag {
+    width: 180px;
+    height: 180px;
+    background-image: url('../img/dragon.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Opzionale: Specchia il secondo drago per farlo guardare verso il titolo */
+.drag.right {
+    transform: scaleX(-1); 
+}
+
+/* Il tuo H1 semplificato */
+h1 {
+    margin: 0; 
     font-family: 'Brush Script MT', cursive;
     font-size: 70px;
     color: #ffcc00;
@@ -49,8 +94,8 @@ h1{
     text-align: center;
 }
 .rec-but{
-    color: #d880fd;
-    background-color: #ffc0e6;
+    color: #4080f7;
+    background-color: #b1d1fe;
     width: 20%;
     height: 35px;
     font-size: 100%;
@@ -75,6 +120,22 @@ h1{
     width:50%;
     display: inline-table;
     text-align: right;
+}
+.quotes{
+    width: 95%;
+    margin: 0 auto;
+}
+.quotes p {
+    margin-bottom: 30px; /* Regola i pixel per aumentare o diminuire la distanza */
+    line-height: 1.6;    /* Opzionale: rende le citazioni più leggibili aumentando lo spazio tra le righe */
+}
+
+
+.quotes p span {
+    display: block;      /* Forza l'autore ad andare a capo anche senza <br> */
+    margin-top: 5px;     /* Piccolo spazio tra testo e autore */
+    font-style: italic;  /* Rende l'autore in corsivo */
+    opacity: 0.8;        /* Lo rende leggermente più chiaro per dare importanza alla citazione */
 }
 
 table{
