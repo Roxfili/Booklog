@@ -276,8 +276,8 @@ img{
 }
 
 /* Dettagli testo */
-.info h3 { font-size: 1.1em; margin: 10px 0 5px; }
-.info p { margin: 2px 0; font-size: 0.9em; color: #555; }
+.info-rec h3 { font-size: 1.1em; margin: 10px 0 5px; }
+.info-rec p { margin: 2px 0; font-size: 0.9em; color: #555; } 
 .rating { 
     /* color: #ffcc00;  */
     margin-top: 10px; 
