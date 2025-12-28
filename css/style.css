@@ -285,16 +285,11 @@ img{
     font-size: 20px;
     
     /* Aggiunge il contorno nero */
-    -webkit-text-stroke: 1px black; /* Per Chrome, Safari, Edge */
-    text-stroke: 1px black;
+    -webkit-text-stroke: 1px black; 
+
 }
 
 .rank {
-    /* margin-top: auto; Spinge il numero in fondo */
-    /* margin-bottom: 2px;
-    font-size: 2em;
-    font-weight: bold;
-    opacity: 0.3; */
     position: absolute;
     bottom: -10px;      /* Distanza fissa dal fondo di ogni gradino */
     left: 50%;         /* Sposta al centro */
