@@ -9,9 +9,9 @@ We all have that social media folder (TikTok, Instagram, YouTube) overflowing wi
 * **Year review** A sum up of your reading year, showing also your favourite book for each month.
 
 ## Tech Stack
-* **HTML5 / CSS3:** Leveraging Flexbox and Absolute Positioning for a precise layout.
+* **HTML5 / CSS3:** The entire UI is handcrafted without external UI frameworks. It features a fully responsive layout and custom-themed components
 * **FontAwesome:** For social media icons and the rating system.
-* **Google Fonts:** Using editorial fonts (like Baskerville/Georgia) for a classic, sharp "bookish" look.
+* **Google Fonts:** Using editorial fonts.
 
 ## How to use it
 1.  **Clone** the repo: `git clone https://github.com/Roxfili/booklog.git`
