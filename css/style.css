@@ -4,81 +4,24 @@
     box-sizing: border-box; /*width contiene gia padding e margin*/
     font-family:'Alkatra';;
 }
-/*MAIN PAGES*/
-main{
-    width:100%;
-    margin: 0 auto;
+
+
+/* generali */
+body{
     background-image: url(../img/wallpaper1.jpg);
     background-size:contain;
     background-repeat: repeat-x;
     background-repeat: repeat-y;
+    margin: 2% 0;
     text-align: center;
-    
 }
-header{
-    height:75px;
-    width:95%;
-    visibility:hidden;
-    margin:0 auto;
-    background-color: rgb(142, 198, 255);
-    background-image: url(../img/dragon.png);
-    background-size:contain;
-    background-repeat: repeat-x;
-}
-.logo{
-    width:20%;
-    height:100%;
-    background-image: url(../img/logo.png);
-    background-size:contain;
-    background-position: left center;
-    background-repeat: no-repeat;
-}
-.sec{
-    width:70%;
-    margin:0 auto;
+/* utils */
 
-    text-align: center;
-    background-color: rgb(250, 235, 215, 0.8);
-    border-radius: 20px;
-}
-
-
-/* Il contenitore che allinea tutto */
-.header-container {
-    padding-top: 20px;
-    display: flex;
-    justify-content: center; /* Centra il gruppo nella pagina */
-    align-items: center;     /* Allinea dritti i draghi e il testo verticalmente */
-    gap: 120px;               /* Qui decidi la DISTANZA tra immagini e titolo */
-    margin: 20px 0;
-}
-
-/* Le immagini dei draghi */
-.drag {
-    width: 180px;
-    height: 180px;
-    background-image: url('../img/dragon.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* Opzionale: Specchia il secondo drago per farlo guardare verso il titolo */
-.drag.right {
-    transform: scaleX(-1); 
-}
-
-/* Il tuo H1 semplificato */
-h1 {
-    margin: 0; 
-    font-family: 'Brush Script MT', cursive;
-    font-size: 70px;
-    color: #ffcc00;
-    text-shadow: 3px 3px 0px #000000;
-}
 .recap-but{
     text-align: center;
+    margin:40px 0;
 }
+
 .rec-but{
     color: #4080f7;
     background-color: #b1d1fe;
@@ -88,12 +31,49 @@ h1 {
     border-radius: 10px;
     font-family:'Alkatra';
     font-size: 22px;
-    font-weight: bold;
-    
-    
+    font-weight: bold; 
+}
+/*home page*/
+.container{
+    width:70%;
+    margin:0 auto;
+    text-align: center;
+    background-color: rgb(250, 235, 215, 0.8);
+    border-radius: 20px;
 }
 
-.info{
+.title-container {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center; /* Centra il gruppo nella pagina */
+    align-items: center;     /* Allinea dritti i draghi e il testo verticalmente */
+    gap: 120px;               /* Qui decidi la DISTANZA tra immagini e titolo */
+    margin: 20px 0;
+}
+
+.drag {
+    width: 180px;
+    height: 180px;
+    background-image: url('../img/dragon.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.drag.right {
+    transform: scaleX(-1); 
+}
+
+
+h1 {
+    margin: 0; 
+    font-family: 'Brush Script MT', cursive;
+    font-size: 70px;
+    color: #ffcc00;
+    text-shadow: 3px 3px 0px #000000;
+}
+
+#info{
     margin:0 auto;
     text-align: center;
 }
@@ -107,28 +87,32 @@ h1 {
     display: inline-table;
     text-align: right;
 }
-.quotes{
+#quotes{
     width: 95%;
     margin: 0 auto;
+    padding: 2% 0;
 }
-.quotes p {
+#quotes p {
     margin-bottom: 30px; /* Regola i pixel per aumentare o diminuire la distanza */
     line-height: 1.6;    /* Opzionale: rende le citazioni più leggibili aumentando lo spazio tra le righe */
 }
 
 
-.quotes p span {
+#quotes p span {
     display: block;      /* Forza l'autore ad andare a capo anche senza <br> */
     margin-top: 5px;     /* Piccolo spazio tra testo e autore */
     font-style: italic;  /* Rende l'autore in corsivo */
     opacity: 0.8;        /* Lo rende leggermente più chiaro per dare importanza alla citazione */
+    font-size:0.9rem;
 }
 
 table{
     margin: 0 auto;
+    padding:2% 0;
     width:90%;
     text-align: center;
 }
+
 td{
     margin:50px;
 }
@@ -145,17 +129,8 @@ td{
     font-weight: bold;
 }
 /*RECAP PAGE*/
-.main-recap{
-    width:80%;
-    height: 95%;
-    margin:0 auto;
 
-    text-align: center;
-    background-color: rgb(250, 235, 215, 0.8);
-    border-radius: 20px;
-}
-.recap
-.bubble{
+.bubbles{
     
     display: flex;
     justify-content: center;          
@@ -211,9 +186,8 @@ img{
     display: flex;
     justify-content: center;
     align-items: flex-end; /* Li allinea tutti sulla base */
-    /* gap: 20px; */
     gap: 2%;
-    margin-top: 50px;
+    margin: 30px 0;
     width: 95%;
     font-family: sans-serif;
 }
@@ -232,9 +206,8 @@ img{
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    
 }
+
 .step img {
     width: 90%;           /* Occupa quasi tutto il gradino */
     height: auto;
@@ -243,7 +216,7 @@ img{
     margin-bottom: 10px;
 }
 
-/* Altezze diverse e dimensioni */
+
 .first {
     height: 70vh; /* Più alto */
     min-height: 375px;
@@ -275,16 +248,14 @@ img{
     height: auto;    /* Mantiene le proporzioni */
 }
 
-/* Dettagli testo */
+
 .info-rec h3 { font-size: 1.1em; margin: 10px 0 5px; }
 .info-rec p { margin: 2px 0; font-size: 0.9em; color: #555; } 
 .rating { 
-    /* color: #ffcc00;  */
-    margin-top: 10px; 
-    color: #ffcc00; /* Giallo interno */
-    font-size: 20px;
     
-    /* Aggiunge il contorno nero */
+    margin-top: 10px; 
+    color: #ffcc00; 
+    font-size: 20px;
     -webkit-text-stroke: 1px black; 
 
 }
