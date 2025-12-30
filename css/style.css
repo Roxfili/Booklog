@@ -21,7 +21,30 @@ body{
     text-align: center;
     margin:40px 0;
 }
-
+.buttt{
+    color: #4080f7;
+    background-color: #b1d1fe;
+    width: 20%;
+    height: 35px;
+    font-size: 100%;
+    border-radius: 10px;
+    font-family:'Alkatra';
+    padding: 2px 20px;
+    border: 2px solid ;
+    border-color:  white rgb(173, 173, 173)rgb(173, 173, 173) white;
+    vertical-align: middle;
+    font-size: 20px; 
+    font-weight: bold; 
+    text-decoration: none;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)
+    
+}
+.buttt:hover{
+    background-color: #a1c8ff;
+}
+.buttt:active{
+    border-color:rgb(173, 173, 173) white white rgb(173, 173, 173);
+}
 .rec-but{
     color: #4080f7;
     background-color: #b1d1fe;
@@ -93,16 +116,16 @@ h1 {
     padding: 2% 0;
 }
 #quotes p {
-    margin-bottom: 30px; /* Regola i pixel per aumentare o diminuire la distanza */
+    margin-bottom: 30px; 
     line-height: 1.6;    /* Opzionale: rende le citazioni più leggibili aumentando lo spazio tra le righe */
 }
 
 
 #quotes p span {
     display: block;      /* Forza l'autore ad andare a capo anche senza <br> */
-    margin-top: 5px;     /* Piccolo spazio tra testo e autore */
-    font-style: italic;  /* Rende l'autore in corsivo */
-    opacity: 0.8;        /* Lo rende leggermente più chiaro per dare importanza alla citazione */
+    margin-top: 5px;     
+    font-style: italic;  
+    color:rgb(44, 44, 44);     
     font-size:0.9rem;
 }
 
