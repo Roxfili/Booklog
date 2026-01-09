@@ -385,6 +385,27 @@ img{
     gap: 4px;                
 }
 
+.confirm-button{
+    
+    padding: 1px;
+    max-width: 15%;
+    border-radius: 10px;
+    font-size: 10px;
+    background-color: rgb(229, 229, 229);
+    border:1px solid white;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: #000 2px 2px 4px;
+}
+
+.confirm-button:hover {
+    background-color: rgb(200, 200, 200);
+}
+.confirm-button:active {
+    box-shadow: none;
+    transform: translateY(2px);
+}
+
 /* Bottone a destra, centrato verticalmente */
 .choose-random-wrapper {
     display: flex;
@@ -392,7 +413,6 @@ img{
     justify-content: center;
 }
 
-/* Bottone ovale/arancione */
 #choose-random {
     padding: 25px 40px;
     border-radius: 50%;
@@ -405,6 +425,13 @@ img{
     box-shadow: #000 2px 2px 4px;
 }
 
+#choose-random:hover {
+    background-color: rgb(255, 99, 71);
+}
+#choose-random:active {
+    box-shadow: none;
+    transform: translateY(2px);
+}
 .tbr-list{
     padding:2%;
 }
