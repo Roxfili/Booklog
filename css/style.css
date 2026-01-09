@@ -95,10 +95,6 @@ body{
     margin: 20px 0;
 }
 
-.title-tbr{
-
-}
-
 .drag {
     width: 180px;
     height: 180px;
@@ -120,9 +116,7 @@ h1 {
     color: #ffcc00;
     text-shadow: 3px 3px 0px #000000;
 }
-.title-home{
 
-}
 .title-tbr{
     color: brown;
 }
