@@ -17,32 +17,53 @@ body{
 }
 /* utils */
 
-.recap-but{
+.change-page-but{
     text-align: center;
     margin:40px 0;
+    
 }
-.buttt{
-    color: #4080f7;
-    background-color: #b1d1fe;
-    width: 20%;
-    height: 35px;
-    font-size: 100%;
+.page-button{
+    margin:40px 0;
     border-radius: 10px;
     font-family:'Alkatra';
     padding: 2px 20px;
     border: 2px solid ;
     border-color:  white rgb(173, 173, 173)rgb(173, 173, 173) white;
-    vertical-align: middle;
-    font-size: 20px; 
     font-weight: bold; 
     text-decoration: none;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)
-    
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)  
 }
-.buttt:hover{
+.blue-button{
+    margin: 20px;
+    color: #4080f7;
+    background-color: #b1d1fe;
+    font-size: 20px;
+}
+.back-home{
+    color: #000000;
+    background-color: #797979;
+    padding: 0px 10px;
+    display: block;      
+    width: fit-content; 
+    margin: 20px 0 0 5%;    
+    font-size: 15px;
+}
+.orange-button{
+    color: coral;
+    width: 100%;
+    background-color: #ffddb3;
+    display: block;
+    margin: 0;
+    font-size: 22px;
+}
+
+.blue-button:hover{
     background-color: #a1c8ff;
 }
-.buttt:active{
+.orange-button:hover{
+    background-color: #ffce80;
+}
+.page-button:active{
     border-color:rgb(173, 173, 173) white white rgb(173, 173, 173);
 }
 .rec-but{
@@ -74,6 +95,10 @@ body{
     margin: 20px 0;
 }
 
+.title-tbr{
+
+}
+
 .drag {
     width: 180px;
     height: 180px;
@@ -83,7 +108,7 @@ body{
     background-repeat: no-repeat;
 }
 
-.drag.right {
+.drag.right { /*with both classes*/
     transform: scaleX(-1); 
 }
 
@@ -91,9 +116,20 @@ body{
 h1 {
     margin: 0; 
     font-family: 'Brush Script MT', cursive;
-    font-size: 70px;
+    font-size: 100px;
     color: #ffcc00;
     text-shadow: 3px 3px 0px #000000;
+}
+.title-home{
+
+}
+.title-tbr{
+    color: brown;
+}
+.title-tbr-2{
+    color:black;
+    font-size: 40px;
+    text-shadow: none;
 }
 
 #info{
@@ -138,11 +174,17 @@ table{
 
 td{
     margin:50px;
+    
+}
+.index-table{
+    width:50%;
 }
 
 .but{
     color: coral;
-    background-color: #fed598;
+    background-color: #ffddb3;
+    border-color:  white rgb(173, 173, 173)rgb(173, 173, 173) white;
+    
     width: 100%;
     height: 45px;
     font-size: 100%;
@@ -189,6 +231,7 @@ td{
 h2{
     text-align: center;
     font-family:'Alkatra';
+    padding-top: 20px;
     font-size: 50px;
     font-weight: bold;
     color:#ffcc00;
@@ -298,25 +341,88 @@ img{
 .titolo-riga {
     width:90%;
     display: flex;
-    align-items: center;    /* Allinea riga e testo verticalmente */
+    align-items: center;    
     text-align: center;
     color:#4080f7;
     margin: 0 auto;
-    font-family: 'Brush Script MT', cursive; /* O il font che preferisci */
+    font-family: 'Brush Script MT', cursive; 
 }
 
 .titolo-riga::before,
 .titolo-riga::after {
     content: "";
-    flex: 1;                /* Fa sì che le linee occupino tutto lo spazio disponibile */
-    height: 2px;            /* Spessore della riga */
-    background: #4080f7;    /* Colore della riga (magari lo stesso giallo del titolo) */
-    box-shadow: 1px 1px 0px #000; /* Opzionale: ombra 2D per richiamare il tuo stile */
+    flex: 1;                
+    height: 2px;            
+    background: #4080f7;    
+    box-shadow: 1px 1px 0px #000; 
 }
 
-/* Spazio tra le linee e il testo */
 .titolo-riga span {
     padding: 0 20px;
+}
+
+/*PAGINA TBR*/
+.choices-tbr .options-tbr {
+    max-width:70%;
+    display: flex;                  
+    justify-content: space-between; 
+    align-items: center;            
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+}
+
+/* Colonna menu a sinistra */
+.menus-wrapper {
+    display: flex;
+    flex-direction: column;         
+    gap: 12px;
+    flex: 1;                        
+}
+
+.length-group {
+    display: flex;           
+    align-items: center;
+    gap: 40px;                
+}
+.first-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;                
+}
+
+/* Bottone a destra, centrato verticalmente */
+.choose-random-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bottone ovale/arancione */
+#choose-random {
+    padding: 25px 40px;
+    border-radius: 50%;
+    font-size: 15px;
+    background-color: rgb(250, 147, 136);
+    color: white;
+    border:none;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: #000 2px 2px 4px;
+}
+
+.tbr-list{
+    padding:2%;
+}
+.tbr-list-container{
+    margin: 0 auto;
+    width: 80%;
+    height: 400px;
+    text-align: center;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    padding: 20px 0;
+    overflow: auto;
 }
 
 
