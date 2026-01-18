@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://fonts.googleapis.com/css?family=Alkatra' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>BOOKLOG</title>
 </head>
@@ -24,18 +25,37 @@
                     <!-- <button class="rec-but">
                         RECAP 2025
                     </button> -->
-                    RECAP 2026 
+                    YEAR RECAP 
                 </a>
             </div>
 
             <section id="info">
                 <div class="last-read">
-                    LAST READ
+                    <p>LAST READ:</p>
+                
+                    <div class="last-read-details">
+                        <img src="img/caraval_cover.jpg" alt="book cover">
+                    
+                        <div class="book-info">
+                            <p><strong>Caraval</strong></p>
+                            <p>Stephanie Garber</p>
+                            <p>15/01-16/01</p>
+                            <p>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </p>
+                            
+                        </div>
+                    </div>
                 </div>
+            
                 <div class="count">
-                    TBR COUNT: <br>
+                    <p>TBR COUNT:</p>
                     <p class="numbr">134</p>
-                    READING COUNT: <br>
+                    <p>READING COUNT:</p>
                     <p class="numbr">21</p>
                 </div>
             </section>
@@ -86,7 +106,44 @@
         </div>
         <table>
             <tr>
-                <td class="index-table"><button class="page-button orange-button">Add to TBR</button></td>
+                <td class="index-table"><button id="add-tbr-pop" class="page-button orange-button">Add to TBR</button></td>
+                <div id="popupTbr" class="popup">
+                    <div class="popup-content">
+                        <span id="close-popup" class="popup-close">&times;</span>
+                        <h2>Add to TBR</h2>
+                        <p>(title and author required)</p>
+                        <form id="popup-tbr-form">
+                            <label for="pu-title-value"><u>Title:</u></label>
+                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
+                            <label for="pu-author-value"><u>Author:</u></label>
+                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="pu-link-value" >Link:</label>
+                            <input type="text" id="pu-link-value" placeholder="https://www.goodreads.com"> <br>
+                            <label for="pu-genre-value" >Genre:</label>
+                            <input type="text" id="pu-title-genre" placeholder="Fantasy"> <br>
+                            <label for="length">Length:</label>
+                                <select id="length">
+                                    <option value="">-- Select --</option>
+                                    <option value="serie">Serie</option>
+                                    <option value="standalone">Standalone</option>
+                                </select>
+                            <!-- solo per saghe -->
+                                
+                            <div id="subcategory-length" style="display:none;">
+                                <label for="pu-prog-value" >Position in saga:</label>
+                                <input type="number" id="pu-prog-value" placeholder="1"> <br>
+                                <label for="pu-length-value" >Books in saga:</label>
+                                <input type="number" id="pu-length-value" placeholder="4"> <br>
+                                <label for="length-sub">Status:</label>
+                                <select id="length-sub">
+                                    <option value="">-- Select --</option>
+                                </select>
+                            </div>
+                
+                        </form>
+                        <button id="send-tbr" class="confirm-button">send</button>
+                    </div>
+                </div>
                 <td class="index-table"><button class="page-button orange-button">Add to Book list</button></td>
             </tr>
             <tr>
@@ -96,11 +153,10 @@
                             Show TBR 
                         </a>
                     </div>
-                    <!-- <button class="but">Show TBR</button> -->
                 </td>
                 <td class="index-table">
                     <div class="change-page-but" style="margin:0">
-                        <a class="page-button orange-button" href="index.html">
+                        <a class="page-button orange-button" href="books.html">
                             Show books 
                         </a>
                     </div>
@@ -114,5 +170,18 @@
         </table>
         
     </main>
+    <!-- POP UP ADD TO TBR -->
+     <button id="open-popup">Apri popup</button>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <span id="close-popup" class="popup-close">&times;</span>
+        <h2>Titolo del popup</h2>
+        <p>Qui puoi mettere qualsiasi contenuto: testo, immagini, input, ecc.</p>
+      </div>
+    </div>
+
+    <script src="javascript/home.js"></script>
 </body>
 </html>

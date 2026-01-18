@@ -1,6 +1,5 @@
 
-
-
+//TBR PAGE
 //tbr options script
 const category = document.getElementById("length");
 const subcategoryContainer = document.getElementById("subcategory-length");
@@ -21,3 +20,4 @@ category.addEventListener("change", () => {
         subcategory.innerHTML = "<option value=''>-- Seleziona --</option>";
     }
 });
+

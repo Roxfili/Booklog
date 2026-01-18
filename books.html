@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://fonts.googleapis.com/css?family=Alkatra' rel='stylesheet'>
     <link rel="stylesheet" href="css/style.css">
-    <title>TBR</title>
+    <title>BOOKS</title>
     
 </head>
 <body>
@@ -14,51 +14,72 @@
     </a>
     <div class="container">
         <header>
-            <h1 class="title-tbr">T<span class="title-tbr-2">o</span> B<span class="title-tbr-2">e</span> R<span class="title-tbr-2">ead</span></h1>
+            <h1 class="title-tbr">My Books</h1>
         </header>
         <main>
-            <section class="choices-tbr">
-                <div class="options-tbr">
-                    <!-- Colonna dei menu -->
-                    <div class="menus-wrapper">
-                        <div class="length-group">
-                            <div class="first-field">
-                                <label for="length">Length:</label>
-                                <select id="length">
-                                    <option value="">-- Select --</option>
-                                    <option value="serie">Serie</option>
-                                    <option value="standalone">Standalone</option>
-                                </select>
-                            </div>
-                            <div id="subcategory-length" style="display:none;">
-                                <label for="length-sub">Status:</label>
-                                <select id="length-sub">
-                                    <option value="">-- Select --</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <div class="first-field">
-                            <label for="genre">Genre:</label>
-                            <select id="genre">
-                                <option value="">-- Select --</option>
-                                <option value="ya">YA</option>
-                                <option value="rom-com">Rom-Com</option>
-                                <option value="fantasy">Fantasy</option>
-                                <option value="romantasy">Romantasy</option>
-                            </select>
-                        </div>
-                        <button class="confirm-button tbr-confirm">
-                            load TBR list
-                        </button>
-                    </div>
+            <section class="choices-books">
+                <div class="order-by">
+                    <p>Order by:</p>
+
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="title">
+                        Title<span class="arrow"></span>
+                    </label>
                 
-                    <!-- Bottone a destra -->
-                    <div class="choose-random-wrapper">
-                        <button id="choose-random">
-                            CHOOSE<br>RANDOM<br>FOR ME</button>
-                    </div>
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="author">
+                        Author<span class="arrow"></span>
+                    </label>
+                
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="random">
+                        Add date<span class="arrow"></span>
+                    </label>
+
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="count">
+                        #tbr<span class="arrow"></span>
+                    </label>
+                
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="price">
+                        Price<span class="arrow"></span>
+                    </label>
+                
+                    <label class="order-btn">
+                        <input type="radio" name="order" value="date">
+                        Random<span class="arrow"></span>
+                    </label>
                 </div>
+            </section>
+
+            <section class="filter-books">
+                <div class="options-books">
+                        
+                    <div class="filter-group">
+                        <label for="filter">Filter by:</label>
+                        <select id="filter">
+                            <option value="">-- Select --</option>
+                            <option value="author">Author</option>
+                            <option value="genre">Genre</option>
+                            <option value="title">Title</option>
+                            <option value="serie">Serie</option>
+                            <option value="status">Status</option>
+                            <option value="bought">Bought</option>
+                        </select>
+                    </div>
+                    <div id="form-order" style="display:none;">
+                        <form id="filter-form">
+                            <label for="filter-value" id="filter-label"></label>
+                            <input type="text" id="filter-value" list="filter-options" placeholder="input value...">
+                            <datalist id="filter-options"></datalist>
+                        </form>
+                    </div> 
+                    <button class="confirm-button">
+                        load Books
+                    </button>        
+                </div>
+                 
             </section>
             <section class="tbr-list">
                 <div class="tbr-list-container">
@@ -84,6 +105,6 @@
             &larr; Home 
         </a>
     </div>
-    <script src="javascript/tbr.js"></script>
+    <script src="javascript/books.js"></script>
 </body>
 </html>

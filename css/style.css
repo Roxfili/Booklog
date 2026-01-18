@@ -26,7 +26,7 @@ body{
     margin:40px 0;
     border-radius: 10px;
     font-family:'Alkatra';
-    padding: 2px 20px;
+    padding: 2px 20px; 
     border: 2px solid ;
     border-color:  white rgb(173, 173, 173)rgb(173, 173, 173) white;
     font-weight: bold; 
@@ -45,8 +45,17 @@ body{
     padding: 0px 10px;
     display: block;      
     width: fit-content; 
+    border: none;
     margin: 20px 0 0 5%;    
     font-size: 15px;
+    box-shadow: #000 2px 2px 4px;
+}
+.back-home:hover{
+    background-color: #5c5c5c;
+}
+.back-home:active{
+    box-shadow: none;
+    transform: translateY(2px);
 }
 .orange-button{
     color: coral;
@@ -126,20 +135,45 @@ h1 {
     text-shadow: none;
 }
 
-#info{
-    margin:0 auto;
-    text-align: center;
+#info {
+    display: flex;                  /* sinistra + destra */
+    justify-content: space-between; /* last-read a sx, count a dx */
+    align-items: flex-start;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px 20%;
 }
-.last-read{
-    width:50%;
-    display:inline;
-    text-align: center;
+
+/* SINISTRA */
+.last-read {
+    width: 50%;
+    text-align: left;
 }
-.count{
-    width:50%;
-    display: inline-table;
+
+/* copertina + info affiancate */
+.last-read-details {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.last-read-details img {
+    width: 80px;        /* dimensione copertina */
+    height: auto;
+}
+
+/* info libro */
+.book-info p {
+    margin: 2px 0;
+}
+
+/* DESTRA */
+.count {
+    width: 50%;
     text-align: right;
 }
+
 #quotes{
     width: 95%;
     margin: 0 auto;
@@ -161,7 +195,7 @@ h1 {
 
 table{
     margin: 0 auto;
-    padding:2% 0;
+    padding:0 0 2% 0;
     width:90%;
     text-align: center;
 }
@@ -187,6 +221,43 @@ td{
     font-size: 22px;
     font-weight: bold;
 }
+
+/* POP UPS */
+/* Overlay del popup (sfondo semi-trasparente) */
+.popup {
+  display: none; /* nascosto di default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* semi-trasparente */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenuto del popup */
+.popup-content {
+  background-color: white;
+  padding: 0 20px 20px 20px;
+  border-radius: 10px;
+  width: 300px;   /* puoi personalizzare */
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Bottone chiudi */
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 /*RECAP PAGE*/
 
 .bubbles{
@@ -237,7 +308,7 @@ h2{
     vertical-align: bottom;
 }
 img{
-    max-width: 90%;
+    max-width: 60%;
     vertical-align: bottom;
     
 }
@@ -387,8 +458,9 @@ img{
 
 .confirm-button{
     
-    padding: 1px;
-    max-width: 15%;
+    padding: 1px 10px;
+
+    max-height: 20px;
     border-radius: 10px;
     font-size: 10px;
     background-color: rgb(229, 229, 229);
@@ -396,6 +468,9 @@ img{
     cursor: pointer;
     font-weight: bold;
     box-shadow: #000 2px 2px 4px;
+}
+.tbr-confirm{
+    max-width: 15%;
 }
 
 .confirm-button:hover {
@@ -442,11 +517,79 @@ img{
     text-align: center;
     background-color: whitesmoke;
     border-radius: 10px;
-    padding: 20px 0;
+    padding: 20px 20px;
     overflow: auto;
 }
 
+/*BOOK LIST PAGE*/
+.choices-books{
+    justify-content: center;
+    display: flex;
+    
+}
 
+.filter-group{
+    margin:10px;
+}
+
+#form-order{
+    margin:10px;
+} 
+.filter-books{
+    justify-content: center;
+    display: flex;
+    gap:20px;
+}
+
+.order-by {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+.order-btn {
+    padding: 8px 16px;
+    border: 0px solid #ab6434;
+    text-align: center;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ab6434;
+    background-color: #e4b993;
+    user-select: none;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.order-btn input {
+    display: none;
+}
+
+.order-btn:has(input:checked) {
+    background-color: #ff8000;
+    color: white;
+}
+
+.order-btn .arrow {
+    width: 0;
+    height: 0;
+    margin-left: 6px;
+    display:none;
+}
+
+.arrow.up {
+    display:inline-flex;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid white; /* freccia verso l’alto */
+}
+
+.arrow.down {
+    display:inline-flex;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid white; /* freccia verso il basso */
+}
 
 /*display:none - è come se non esistesse, non occupa piu lo spazio, 
 visibility: hidden - continua ad occupare spazio,
