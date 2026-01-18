@@ -109,7 +109,7 @@
                 <td class="index-table"><button id="add-tbr-pop" class="page-button orange-button">Add to TBR</button></td>
                 <div id="popupTbr" class="popup">
                     <div class="popup-content">
-                        <span id="close-popup" class="popup-close">&times;</span>
+                        <span id="close-tbr-popup" class="popup-close">&times;</span>
                         <h2>Add to TBR</h2>
                         <p>(title and author required)</p>
                         <form id="popup-tbr-form">
@@ -141,10 +141,76 @@
                             </div>
                 
                         </form>
-                        <button id="send-tbr" class="confirm-button">send</button>
+                        <button type="submit" id="send-tbr" class="confirm-button">send</button>
                     </div>
                 </div>
-                <td class="index-table"><button class="page-button orange-button">Add to Book list</button></td>
+                <div id="judgy-popup" class="popup">
+                    <div class="popup-content">
+                        <span id="close-judgy-popup" class="popup-close">&times;</span>
+                        <h2>I SEE U</h2>
+                        <p>You already added this book.... maybe it's time to... i dunno.... READ IT?!?!?!? &#128520;</p>
+                        <p>Wow, a new book in the tbr... AS IF YOU NEEDED IT &#128529;</p>
+                    </div>
+                </div>
+
+                <td class="index-table"><button id="add-read-pop" class="page-button orange-button">Add Read Book</button></td>
+                <div id="popupCurRead" class="popup">
+                    <div class="popup-content">
+                        <span id="close-CR-popup" class="popup-close">&times;</span>
+                        <h2>New Read</h2>
+                        <p>(YAY)</p>
+                        <form id="popup-CR-form">
+                            <label for="pu-title-value"><u>Title:</u></label>
+                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
+                            <label for="pu-author-value"><u>Author:</u></label>
+                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="pu-start-value" >Start date:</label>
+                            <input type="date" id="pu-start-value" placeholder="01/01/2026"> <br>
+                            <label for="pu-end-value" >Finish date:</label>
+                            <input type="date" id="pu-end-genre" placeholder="01/01/2026"> <br>
+                            <label for="pu-rate-value" >Rating:</label>
+                            <input type="number" id="pu-rate-genre" placeholder="5" min="0" max="5" step="0.5"> <br>
+                        </form>
+
+                        <button id="send-curRead" class="confirm-button">send</button>
+                        
+                    </div>
+                </div>
+                <div id="popup-stat" class="popup">
+                    <div class="popup-content">
+                        <span id="close-stat-popup" class="popup-close">&times;</span>
+                        <form id="cascade-form">                                     
+                            <div class="question" id="q1">
+                                <p>Better than 3?</p>
+                                <label>
+                                    <input type="radio" name="q1" value="yes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="q1" value="no"> No
+                                </label>
+                            </div>
+                            <div class="question" id="q2" style="display:none;">
+                                <p>Better than 2?</p>
+                                <label>
+                                    <input type="radio" name="q2" value="yes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="q2" value="no"> No
+                                </label>
+                            </div>
+                            <div class="question" id="q3" style="display:none;">
+                                <p>Better than 1?</p>
+                                <label>
+                                    <input type="radio" name="q3" value="yes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="q3" value="no"> No
+                                </label>
+                            </div>
+                            <button type="submit" id="send-stats" class="confirm-button">submit</button>
+                        </form>
+                    </div>
+                </div>
             </tr>
             <tr>
                 <td class="index-table">
