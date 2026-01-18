@@ -91,6 +91,7 @@ const closeCurBtn = document.getElementById("close-CR-popup");
 const popupStat = document.getElementById("popup-stat");
 const closeStatBtn = document.getElementById("close-stat-popup");
 const sendBtnStat = document.getElementById("send-stats")
+const statForm = document.getElementById("cascade-form");
 
 readPopBtn.addEventListener("click", () => {
   popupRead.style.display = "flex"; // display:flex per centrare contenuto
@@ -98,26 +99,26 @@ readPopBtn.addEventListener("click", () => {
 
 closeCurBtn.addEventListener("click", () => {
   popupRead.style.display = "none"; 
+  popupCrForm.reset();
 });
 
 sendBtnCur.addEventListener("click", () => {
   popupRead.style.display = "none";
   popupStat.style.display="flex";
+  popupCrForm.reset();
 });
 
 closeStatBtn.addEventListener("click", () => {
   popupStat.style.display = "none"; 
+  statForm.reset();
 });
 
 sendBtnStat.addEventListener("click", () => {
   popupStat.style.display="none";
+  statForm.reset();
+
 });
 
-window.addEventListener("click", (e) => {
-  if (e.target === popup) {
-    popup.style.display = "none";
-  }
-});
 //pop up classifica
 const q1 = document.getElementById("q1");
 const q2 = document.getElementById("q2");
@@ -159,4 +160,30 @@ form.addEventListener("submit", (e) => {
     q3: form.querySelector('input[name="q3"]:checked')?.value
   };
 
+});
+
+//popup buy
+
+const popupBuy = document.getElementById("popupBuy");
+const openBuyBtn = document.getElementById("open-buy-popup");
+const closeBuyBtn = document.getElementById("close-buy-popup");
+const sendBuyBtn = document.getElementById("send-buy")
+const buyForm = document.getElementById("popup-buy-form");
+
+// -------- pop up prova
+
+openBuyBtn.addEventListener("click", () => {
+  popupBuy.style.display = "flex"; // display:flex per centrare contenuto
+});
+
+// Chiudi popup cliccando sulla X
+closeBuyBtn.addEventListener("click", () => {
+  popupBuy.style.display = "none";
+  buyForm.reset();
+
+});
+
+sendBuyBtn.addEventListener("click", () => {
+  popupBuy.style.display = "none";
+  buyForm.reset();
 });

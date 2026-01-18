@@ -230,8 +230,27 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2"> <button class="page-button orange-button">I bought a book</button></td>
-            
+                <td colspan="2"> <button id="open-buy-popup" class="page-button orange-button">I bought a book</button></td>
+                <div id="popupBuy" class="popup">
+                    <div class="popup-content">
+                        <span id="close-buy-popup" class="popup-close">&times;</span>
+                        <h2>Shopping?</h2>
+                        <p>(&#128184;&#128184;&#128184;)</p>
+                        <form id="popup-buy-form">
+                            <label for="pu-title-value"><u>Title:</u></label>
+                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
+                            <label for="pu-author-value"><u>Author:</u></label>
+                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="pu-price-value" >Price:</label>
+                            <input type="number" id="pu-price-value" placeholder="€0.00" step="0.01"> <br>
+                            <label for="pu-date-value" >Date:</label>
+                            <input type="date" id="pu-date-genre" placeholder="01/01/2026"> <br>
+                        </form>
+
+                        <button id="send-buy" class="confirm-button">send</button>
+                        
+                    </div>
+                </div>
             </tr>
         </table>
         
