@@ -7,8 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>BOOKLOG</title>
+    <style>
+        html { display: none; }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/auth_check.js"></script>
+
 </head>
 <body>
+    <div class="nav-bar">
+        <a class="page-button logout-btn" id="logoutBtn" href="#">logout</a>
+    </div>
     <div class="container">
         
         <header>
@@ -253,7 +263,7 @@
                 </div>
             </tr>
         </table>
-        
+    </div>
     </main>
     <!-- POP UP ADD TO TBR -->
      <button id="open-popup">Apri popup</button>
@@ -266,7 +276,7 @@
         <p>Qui puoi mettere qualsiasi contenuto: testo, immagini, input, ecc.</p>
       </div>
     </div>
-
     <script src="javascript/home.js"></script>
+    <script src="javascript/logout.js"></script>
 </body>
 </html>

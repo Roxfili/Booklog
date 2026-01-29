@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Alkatra' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>LOGIN</title>
+</head>
+<body>
+    <div class="container">
+        
+        <header>
+            <section class="title-container">
+                <div class="drag left"></div>
+                <h1 class="title-home" id="form-title">Welcome</h1>
+                <div class="drag right"></div>
+            </section>
+        </header>
+
+        <main>
+            <div class="login-container">
+                <form class="login-form">
+                    <h2 style="color:aquamarine">Do I know You???? &#128530;</h2>
+                    <br>
+                    <div class="input-group">
+                        <label for="username">Username (email)</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">Login</button>
+
+                    <div class="footer-links">
+                        <span id="toggle-text">Don't have an account yet? <a href="#" id="toggle-link">Register</a></span>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/login.js"></script>
+</body>
+</html>

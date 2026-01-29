@@ -1,0 +1,68 @@
+//DB
+const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
+const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+// 2. Selezione elementi
+const loginForm = document.querySelector('.login-form');
+const toggleLink = document.getElementById('toggle-link');
+const formTitle = document.getElementById('form-title');
+const funnyMessage = document.querySelector('h2');
+const submitBtn = document.querySelector('.login-btn');
+
+let isLoginMode = true;
+
+// 3. Gestione del Toggle (Registrati / Accedi)
+if (toggleLink) {
+    toggleLink.addEventListener('click', function(e) {
+        e.preventDefault(); // BLOCCA IL RICARICAMENTO
+        e.stopPropagation(); // BLOCCA ALTRI EVENTI
+        
+        isLoginMode = !isLoginMode;
+        console.log("Modalità Login:", isLoginMode);
+
+        if (isLoginMode) {
+            formTitle.innerText = "Welcome";
+            funnyMessage.innerHTML = "Do I know You???? &#128530;";
+            submitBtn.innerText = "Accedi";
+            toggleLink.innerText = "Registrati";
+        } else {
+            formTitle.innerText = "Join Us";
+            funnyMessage.innerHTML = "Nice to meet you! &#128522;";
+            submitBtn.innerText = "Crea Account";
+            toggleLink.innerText = "Accedi qui";
+        }
+    });
+}
+
+// 4. Gestione Invio Form
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // BLOCCA IL RICARICAMENTO DEL FORM
+    
+    const email = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Attendere...";
+
+    try {
+        if (isLoginMode) {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            
+            window.location.href = 'index.html';
+        } else {
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) throw error;
+            alert("Registrazione effettuata! Controlla l'email.");
+            if (data.user && data.session) {
+                window.location.href = 'index.html';
+            }
+        }
+    } catch (err) {
+        alert("Errore: " + err.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = isLoginMode ? "Accedi" : "Crea Account";
+    }
+});

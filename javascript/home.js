@@ -1,3 +1,15 @@
+//DB
+const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
+const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
+
+const supabase = window.supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
+
+
+
 //pop up prova
 const popup = document.getElementById("popup");
 const openBtn = document.getElementById("open-popup");
@@ -187,3 +199,4 @@ sendBuyBtn.addEventListener("click", () => {
   popupBuy.style.display = "none";
   buyForm.reset();
 });
+BooksReadTbr2026
