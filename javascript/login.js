@@ -1,11 +1,12 @@
 //DB
-const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
-const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
+// const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
+// const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
 
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+// const sbAuth = supabase.createClient(supabaseUrl, supabaseKey);
 // 2. Selezione elementi
 const loginForm = document.querySelector('.login-form');
 const toggleLink = document.getElementById('toggle-link');
+const toggleText = document.getElementById('toggle-text');
 const formTitle = document.getElementById('form-title');
 const funnyMessage = document.querySelector('h2');
 const submitBtn = document.querySelector('.login-btn');
@@ -24,13 +25,16 @@ if (toggleLink) {
         if (isLoginMode) {
             formTitle.innerText = "Welcome";
             funnyMessage.innerHTML = "Do I know You???? &#128530;";
-            submitBtn.innerText = "Accedi";
-            toggleLink.innerText = "Registrati";
+            submitBtn.innerText = "Login";
+            toggleText.innerText = "Don't have an account yet?";
+            toggleLink.innerText = "Register";
         } else {
             formTitle.innerText = "Join Us";
             funnyMessage.innerHTML = "Nice to meet you! &#128522;";
-            submitBtn.innerText = "Crea Account";
-            toggleLink.innerText = "Accedi qui";
+            submitBtn.innerText = "Create Account";
+            toggleText.innerText = "Already one of us?";
+            toggleLink.innerText = "Log in";
+    
         }
     });
 }

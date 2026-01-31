@@ -1,3 +1,11 @@
+// //DB
+// const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
+// const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
+
+// const sbAuth = window.supabase.createClient(
+//   supabaseUrl,
+//   supabaseKey
+// );
 //BOOKS PAGE FILTER OPTIONS SCRIPT
 
 const filterSelect = document.getElementById("filter");

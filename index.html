@@ -64,9 +64,9 @@
             
                 <div class="count">
                     <p>TBR COUNT:</p>
-                    <p class="numbr">134</p>
-                    <p>READING COUNT:</p>
-                    <p class="numbr">21</p>
+                    <p class="numbr" id="tbr-total">0</p>
+                    <p>READING COUNT <br>(from Jan 2026):</p>
+                    <p class="numbr" id="read-total">0</p>
                 </div>
             </section>
 
@@ -123,12 +123,14 @@
                         <h2>Add to TBR</h2>
                         <p>(title and author required)</p>
                         <form id="popup-tbr-form">
-                            <label for="pu-title-value"><u>Title:</u></label>
-                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
-                            <label for="pu-author-value"><u>Author:</u></label>
-                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="tbr-title"><u>Title:</u></label>
+                            <input type="text" id="tbr-title" placeholder="Caraval" required> <br>
+                            <label for="tbr-author"><u>Author:</u></label>
+                            <input type="text" id="tbr-author" placeholder="Stephanie Garber" required> <br>
                             <label for="pu-link-value" >Link:</label>
                             <input type="text" id="pu-link-value" placeholder="https://www.goodreads.com"> <br>
+                            <label for="pu-cover-value">Cover Link:</label>
+                            <input type="text" id="pu-cover-value" placeholder="https://image-url.com"> <br>
                             <label for="pu-genre-value" >Genre:</label>
                             <input type="text" id="pu-title-genre" placeholder="Fantasy"> <br>
                             <label for="length">Length:</label>
@@ -140,13 +142,17 @@
                             <!-- solo per saghe -->
                                 
                             <div id="subcategory-length" style="display:none;">
+                                <label for="pu-saga-name">Saga Name:</label>
+                                <input type="text" id="pu-saga-name" placeholder="Caraval"> <br>
                                 <label for="pu-prog-value" >Position in saga:</label>
                                 <input type="number" id="pu-prog-value" placeholder="1"> <br>
                                 <label for="pu-length-value" >Books in saga:</label>
                                 <input type="number" id="pu-length-value" placeholder="4"> <br>
-                                <label for="length-sub">Status:</label>
-                                <select id="length-sub">
+                                <label for="pu-length-sub">Status:</label>
+                                <select id="pu-length-sub">
                                     <option value="">-- Select --</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
                                 </select>
                             </div>
                 
@@ -158,8 +164,7 @@
                     <div class="popup-content">
                         <span id="close-judgy-popup" class="popup-close">&times;</span>
                         <h2>I SEE U</h2>
-                        <p>You already added this book.... maybe it's time to... i dunno.... READ IT?!?!?!? &#128520;</p>
-                        <p>Wow, a new book in the tbr... AS IF YOU NEEDED IT &#128529;</p>
+                        <p id="judgy-message-text"></p> 
                     </div>
                 </div>
 
@@ -170,16 +175,18 @@
                         <h2>New Read</h2>
                         <p>(YAY)</p>
                         <form id="popup-CR-form">
-                            <label for="pu-title-value"><u>Title:</u></label>
-                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
-                            <label for="pu-author-value"><u>Author:</u></label>
-                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="read-title"><u>Title:</u></label>
+                            <input type="text" id="read-title" placeholder="Caraval" required> <br>
+                            <label for="read-author"><u>Author:</u></label>
+                            <input type="text" id="read-author" placeholder="Stephanie Garber" required> <br>
                             <label for="pu-start-value" >Start date:</label>
                             <input type="date" id="pu-start-value" placeholder="01/01/2026"> <br>
-                            <label for="pu-end-value" >Finish date:</label>
-                            <input type="date" id="pu-end-genre" placeholder="01/01/2026"> <br>
-                            <label for="pu-rate-value" >Rating:</label>
-                            <input type="number" id="pu-rate-genre" placeholder="5" min="0" max="5" step="0.5"> <br>
+                            <label for="read-end" >Finish date:</label>
+                            <input type="date" id="read-end" placeholder="01/01/2026"> <br>
+                            <label for="read-cover">Cover Link:</label>
+                            <input type="text" id="read-cover" placeholder="https://image-url.com"> <br>
+                            <label for="read-rate" >Rating:</label>
+                            <input type="number" id="read-rate" placeholder="5" min="0" max="5" step="0.5"> <br>
                         </form>
 
                         <button id="send-curRead" class="confirm-button">send</button>
@@ -247,14 +254,14 @@
                         <h2>Shopping?</h2>
                         <p>(&#128184;&#128184;&#128184;)</p>
                         <form id="popup-buy-form">
-                            <label for="pu-title-value"><u>Title:</u></label>
-                            <input type="text" id="pu-title-value" placeholder="Caraval" required> <br>
-                            <label for="pu-author-value"><u>Author:</u></label>
-                            <input type="text" id="pu-author-value" placeholder="Stephanie Garber" required> <br>
-                            <label for="pu-price-value" >Price:</label>
-                            <input type="number" id="pu-price-value" placeholder="€0.00" step="0.01"> <br>
-                            <label for="pu-date-value" >Date:</label>
-                            <input type="date" id="pu-date-genre" placeholder="01/01/2026"> <br>
+                            <label for="buy-title-value"><u>Title:</u></label>
+                            <input type="text" id="buy-title-value" placeholder="Caraval" required> <br>
+                            <label for="buy-author-value"><u>Author:</u></label>
+                            <input type="text" id="buy-author-value" placeholder="Stephanie Garber" required> <br>
+                            <label for="buy-price-value" >Price:</label>
+                            <input type="number" id="buy-price-value" placeholder="€0.00" step="0.01"> <br>
+                            <label for="buy-date-value" >Date:</label>
+                            <input type="date" id="buy-date-genre" placeholder="01/01/2026"> <br>
                         </form>
 
                         <button id="send-buy" class="confirm-button">send</button>

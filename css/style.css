@@ -607,6 +607,42 @@ img{
     overflow: auto;
 }
 
+.tbr-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    color: #333;
+}
+
+.tbr-table th, .tbr-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.tbr-table img {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tbr-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.winner-row {
+    background-color: #ffeb3b !important; /* Giallo acceso */
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 235, 59, 0.7);
+    outline: 2px solid #fbc02d;
+}
+
+/* Animazione di lampeggio durante la scelta */
+.highlight-step {
+    background-color: rgba(255, 165, 0, 0.3) !important;
+}
+
 /*BOOK LIST PAGE*/
 .choices-books{
     justify-content: center;
