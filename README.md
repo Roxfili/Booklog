@@ -13,7 +13,88 @@ We all have that social media folder (TikTok, Instagram, YouTube) overflowing wi
 * **FontAwesome:** For social media icons and the rating system.
 * **Google Fonts:** Using editorial fonts.
 
+## DB config
+create table public."Books" (
+  title character varying not null,
+  author character varying not null,
+  length character varying null,
+  saga character varying null,
+  serie_position smallint null,
+  status boolean null,
+  cover_link character varying null,
+  "ID" uuid not null default gen_random_uuid (),
+  genre character varying null,
+  tropes text null,
+  constraint Books_pkey primary key ("ID")
+) TABLESPACE pg_default;
+
+create table public."Monthly_Favourites" (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid not null default auth.uid (),
+  book_id uuid null default gen_random_uuid (),
+  month integer not null,
+  year bigint not null,
+  constraint Monthly_Favourites_pkey primary key (id),
+  constraint Monthly_Favourites_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
+  constraint Monthly_Favourites_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public."Purchase" (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid not null default auth.uid (),
+  book_id uuid null default gen_random_uuid (),
+  price real null,
+  shop_date date null,
+  title character varying null,
+  constraint Purchase_pkey primary key (id),
+  constraint Purchase_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
+  constraint Purchase_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE
+) TABLESPACE pg_default;
+
+create table public."Read" (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid not null default auth.uid (),
+  book_id uuid null default gen_random_uuid (),
+  start_date date null,
+  finish_date date not null,
+  stars real null,
+  is_from_tbr boolean null default false,
+  constraint Read_pkey primary key (id),
+  constraint Read_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
+  constraint Read_bser_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE,
+  constraint date_check check ((start_date <= finish_date)),
+  constraint stars_range_check check (
+    (
+      (stars >= (0)::double precision)
+      and (stars <= (5)::double precision)
+    )
+  )
+) TABLESPACE pg_default;
+
+create table public."TBR" (
+  link character varying null,
+  add_date date null,
+  "ID" uuid not null default gen_random_uuid (),
+  user_id uuid not null default auth.uid (),
+  book_id uuid not null default gen_random_uuid (),
+  constraint TBR_pkey primary key ("ID"),
+  constraint TBR_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
+  constraint TBR_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE
+) TABLESPACE pg_default;
+
+create table public."Top_3_Year" (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid not null default auth.uid (),
+  book_id uuid not null default gen_random_uuid (),
+  rank integer null,
+  year integer null,
+  constraint Top_3_Year_pkey primary key (id),
+  constraint Top_3_Year_book_id_key unique (book_id),
+  constraint Top_3_Year_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
+  constraint Top_3_Year_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
+) TABLESPACE pg_default;
+
 ## How to use it
 1.  **Clone** the repo: `git clone https://github.com/Roxfili/booklog.git`
 2.  Open `index.html` in your favorite browser.
-3.  **Manually add** your books and the links to those videos you saved "for later."
+3.  **insert your DB info** in javascript/auth_check.js. The application is made for a SuperBase DAtabase. To connect yours insert your URL and public key as 'AUTH_URL' and 'AUTH_KEY'

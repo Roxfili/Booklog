@@ -30,14 +30,14 @@
                 </h2>
                 <div class="bubbles">
                     <div class="text-bub" style="margin-top:30px">
-                        <p class="numbr" >195 </p>
+                        <p class="numbr" id="tot-read">0</p>
                         <p>
                             Books read
                         </p>
                     </div>
                 
                     <div class="text-bub" style="margin-top:120px">
-                        <p class="numbr">17 </p>
+                        <p class="numbr" id="tot-from-tbr">0</p>
                         <p>
                             Books read from TBR <br>
                             YAY :'&rpar;
@@ -45,9 +45,9 @@
                     </div>
                 
                     <div class="text-bub" style="margin-top:0px">
-                        <p class="numbr">15 </p>
+                        <p class="numbr" id="tot-buy">0</p>
                         <p>
-                            Books bought (300&euro;)
+                            Books bought &lpar;<span id="tot-price">0.00</span>&euro;&rpar;
                         </p>
                     </div>
                 </div>
@@ -62,34 +62,34 @@
                 <section class="podium">
                 
                     <div class="step second">
-                        <img src="img/caraval_cover.jpg" alt="2nd">
+                        <img id="podium-image2" src="img/caraval_cover.jpg" alt="2nd">
                         <div class="info-rec">
-                            <h3>Titolo Libro 2</h3>
-                            <p>Autore</p>
-                            <p>23/10-23/10</p>
-                            <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                            <h3 id="podium-title2">Titolo Libro 2</h3>
+                            <p id="podium-author2">Autore</p>
+                            <p id="podium-dates2">23/10-23/10</p>
+                            <div class="rating" id="podium-rate2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
                         </div>
                         <div class="rank">2</div>
                     </div>
 
                     <div class="step first">
-                        <img src="img/caraval_cover.jpg" alt="1st">
+                        <img id="podium-image1" src="img/caraval_cover.jpg" alt="1st">
                         <div class="info-rec">
-                            <h3>Titolo Libro 1</h3>
-                            <p>Autore</p>
-                            <p>20/02-21/02</p>
-                            <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <h3 id="podium-title1">Titolo Libro 1</h3>
+                            <p id="podium-author1">Autore</p>
+                            <p id="podium-dates1">20/02-21/02</p>
+                            <div class="rating" id="podium-rate1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                         </div>
                         <div class="rank">1</div>
                     </div>
 
                     <div class="step third">
-                        <img src="img/caraval_cover.jpg" alt="3rd">
+                        <img id="podium-image3" src="img/caraval_cover.jpg" alt="3rd">
                         <div class="info-rec">
-                            <h3>Titolo Libro 3</h3>
-                            <p>Autore</p>
-                            <p>13/07-15/07</p>
-                            <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+                            <h3 id="podium-title3">Titolo Libro 3</h3>
+                            <p id="podium-author3">Autore</p>
+                            <p id="podium-dates3">13/07-15/07</p>
+                            <div class="rating" id="podium-rate3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
                         </div>
                         <div class="rank">3</div>
                     </div>
@@ -101,7 +101,7 @@
                         <span>monthly favs</span>
                     </h2>
                     <br>
-                    <table>
+                    <table class="month-table">
                         <tr class="mon">
                             <td>JANUARY</td>
                             <td>FEBRUARY</td>
@@ -110,49 +110,49 @@
                         </tr>
                         <tr class="book-img">
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img1" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img2" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img3" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img4" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                         </tr>
                         <tr class="rating">
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
                         </tr>
                         <tr class="mon">
-                            <td>MAY</td>
+                            <td >MAY</td>
                             <td>JUNE</td>
                             <td>JULY</td>
                             <td>AUGUST</td>
                         </tr>
                         <tr class="book-img">
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3" >
+                                <img id="fav-img5" src="img/caraval_cover.jpg" alt="foto 3" >
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img6" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img7" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img8" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                         </tr>
                         <tr class="rating">
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate5"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate6"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate7"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate8"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
                         </tr>
                         <tr class="mon">
                             <td>SEPTEMBER</td>
@@ -162,23 +162,23 @@
                         </tr>
                         <tr class="book-img">
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img9" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img10" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img11" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                             <td>
-                                <img src="img/caraval_cover.jpg" alt="foto 3">
+                                <img id="fav-img12" src="img/caraval_cover.jpg" alt="foto 3">
                             </td>
                         </tr>
                         <tr class="rating">
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
-                            <td><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate9"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></td>
+                            <td id="fav-rate10"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate11"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></td>
+                            <td id="fav-rate12"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i></td>
                         </tr>
                     </table>
                     
@@ -194,6 +194,7 @@
             &larr; home
         </a>
     </div>
+    <script src="javascript/recap.js"></script>
     <script src="javascript/logout.js"></script>
 </body>
 </html>

@@ -1,7 +1,8 @@
+//--------INITIAL COUNTS----------
 async function updateDashboardCounts() {
-    try {
+  try {
         
-try {
+    try {
         
         const { data: tbrData, error: tbrError } = await sbAuth
             .from('TBR')
@@ -22,19 +23,19 @@ try {
         if (tbrElem) tbrElem.innerText = uniqueTbrCount || 0;
         if (readElem) readElem.innerText = readCount || 0;
 
-        } catch (err) {
-          console.error("Errore conteggio:", err);
-        }
-
     } catch (err) {
-        console.error("Errore conteggio:", err.message);
+      console.error("Errore conteggio:", err);
     }
+
+  } catch (err) {
+      console.error("Errore conteggio:", err.message);
+  }
 
 }
 
 updateDashboardCounts();
 
-//last read
+//-------- LAST READ ----------
 
 async function updateLastRead() {
   const lrTitle = document.getElementById("lr-title");
@@ -73,54 +74,10 @@ async function updateLastRead() {
   }
 }
 
-function renderStars(rating) {
-    let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-        if (rating >= i) {
-            // Stella Piena
-            starsHTML += '<i class="fas fa-star"></i>';
-        } else if (rating >= i - 0.5) {
-            // Mezza Stella
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        } else {
-            // Stella Vuota (solo contorno)
-            starsHTML += '<i class="far fa-star"></i>';
-        }
-    }
-    return starsHTML;
-}
-
-function formatShortDate(dateStr) {
-    if (!dateStr) return null;
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}`;
-}
-
 updateLastRead()
 
-//pop up prova
-const popup = document.getElementById("popup");
-const openBtn = document.getElementById("open-popup");
-const closeBtn = document.getElementById("close-popup");
+//-------- POPUP TBR ----------
 
-
-openBtn.addEventListener("click", () => {
-  popup.style.display = "flex"; // display:flex per centrare contenuto
-});
-
-// Chiudi popup cliccando sulla X
-closeBtn.addEventListener("click", () => {
-  popup.style.display = "none";
-});
-
-// Chiudi popup cliccando fuori dal contenuto
-window.addEventListener("click", (e) => {
-  if (e.target === popup) {
-    popup.style.display = "none";
-  }
-});
-
-//pop up tbr
 const sendBtnTbr = document.getElementById("send-tbr")
 const tbrPopBtn = document.getElementById("add-tbr-pop");
 const popupTbr = document.getElementById("popupTbr");
@@ -131,7 +88,7 @@ const subcategory = document.getElementById("length-sub");
 const judgyPop = document.getElementById("judgy-popup");
 const closeJudgyBtn = document.getElementById("close-judgy-popup");
 const closeTbrBtn = document.getElementById("close-tbr-popup");
-// ----- POP UP TBR
+
 tbrPopBtn.addEventListener("click", () => {
   popupTbr.style.display = "flex"; // display:flex per centrare contenuto
   loadGenreSuggestions()
@@ -330,7 +287,8 @@ category.addEventListener("change", () => {
         subcategory.innerHTML = "<option value=''>-- Seleziona --</option>";
     }
 });
-//pop up read book
+
+//--------POPUP BOOK READ----------
 const sendBtnCur = document.getElementById("send-curRead")
 const readPopBtn = document.getElementById("add-read-pop");
 const popupRead = document.getElementById("popupCurRead");
@@ -360,7 +318,6 @@ closeStatBtn.addEventListener("click", () => {
 let currentNewBookId = null;
 let currentNewBookTitle = "";
 
-// ----- POP UP READ BOOK (Primo Step) -----
 sendBtnCur.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -447,7 +404,7 @@ sendBtnCur.addEventListener("click", async (e) => {
     }
 });
 
-// ----- POP UP STAT (Secondo Step: Top 3) -----
+// ----- POP UP STAT  -----
 sendBtnStat.addEventListener("click", async (e) => {
     e.preventDefault();
     
@@ -648,7 +605,7 @@ async function handleMonthlyFavorite(bookId, stars, endDate) {
     }
 }
 
-//popup buy
+//--------POPUP BUY----------
 
 const popupBuy = document.getElementById("popupBuy");
 const openBuyBtn = document.getElementById("open-buy-popup");
@@ -656,22 +613,90 @@ const closeBuyBtn = document.getElementById("close-buy-popup");
 const sendBuyBtn = document.getElementById("send-buy")
 const buyForm = document.getElementById("popup-buy-form");
 
-// -------- pop up prova
 
 openBuyBtn.addEventListener("click", () => {
   popupBuy.style.display = "flex"; // display:flex per centrare contenuto
 });
 
-// Chiudi popup cliccando sulla X
 closeBuyBtn.addEventListener("click", () => {
   popupBuy.style.display = "none";
   buyForm.reset();
 
 });
 
-sendBuyBtn.addEventListener("click", () => {
+sendBuyBtn.addEventListener("click", async(e) => {
+  e.preventDefault();
+
+    const title = document.getElementById('buy-title-value').value.trim();
+    const author = document.getElementById('buy-author-value').value.trim();
+    const price = document.getElementById('buy-price-value').value;
+    const date = document.getElementById('buy-date-genre').value;
+
+    if (!title || !author || !price || !date) return alert("Missing data!");
+
+    try {
+        
+        let {data: book} = await sbAuth.from('Books')
+            .select('ID')
+            .ilike('title', title)
+            .ilike('author', author)
+            .maybeSingle();
+        
+        let bookId;
+
+        if (!book) {
+            const {data: newB, error: bookError} = await sbAuth
+              .from('Books')
+              .insert([{ title, author}])
+              .select()
+              .single();
+            if (bookError) throw bookError;
+            bookId = newB.ID;
+        } else {
+            bookId = book.ID;
+        }
+
+        const { error: purchaseError } = await sbAuth
+            .from('Purchase')
+            .insert([{ 
+                book_id: bookId, 
+                price: parseFloat(price), 
+                shop_date: date 
+            }]);
+        if (purchaseError) throw purchaseError;
+
+        alert("Acquisto registrato con successo!");
+
+    } catch (err) {
+        console.error("Errore:", err.message);
+        alert("Ops! Qualcosa è andato storto nel salvataggio.");
+    }
   popupBuy.style.display = "none";
   buyForm.reset();
 });
 
+//-------- UTILS ----------
+
+function renderStars(rating) {
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+        if (rating >= i) {
+            // Stella Piena
+            starsHTML += '<i class="fas fa-star"></i>';
+        } else if (rating >= i - 0.5) {
+            // Mezza Stella
+            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+            // Stella Vuota (solo contorno)
+            starsHTML += '<i class="far fa-star"></i>';
+        }
+    }
+    return starsHTML;
+}
+
+function formatShortDate(dateStr) {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}`;
+}
 //BooksReadTbr2026

@@ -513,6 +513,32 @@ img{
     padding: 0 20px;
 }
 
+.month-table {
+    width: 95%;
+    table-layout: fixed; 
+    border-collapse: collapse;
+}
+
+.month-table td {
+    width: 25%; 
+    overflow: hidden; 
+    text-align: center;
+    vertical-align: middle;
+}
+
+.month-table img {     
+    max-width: 55%;
+    height: auto;     
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.mon{
+    background-color: rgb(255, 217, 111);
+}
+
 /*PAGINA TBR*/
 .choices-tbr .options-tbr {
     max-width:70%;
