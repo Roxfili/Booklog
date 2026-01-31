@@ -8,6 +8,7 @@
 
 /* generali */
 body{
+    min-height: 100vh;
     background-image: url(../img/wallpaper1.jpg);
     background-size:contain;
     background-repeat: repeat-x;
@@ -555,6 +556,19 @@ img{
     font-weight: bold;
     box-shadow: #000 2px 2px 4px;
 }
+
+.reset-button{
+    padding: 1px 10px;
+
+    max-height: 20px;
+    border-radius: 10px;
+    font-size: 10px;
+    background-color: rgb(229, 229, 229);
+    border:1px solid white;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: #000 2px 2px 4px;
+}
 .tbr-confirm{
     max-width: 15%;
 }
@@ -683,6 +697,27 @@ img{
     box-shadow: 2px 2px rgba(0, 0, 0, 0.5);
 }
 
+#clear-sort-btn {
+    
+    border: none;
+    outline: none;
+    font-family: inherit; 
+    font-size: 1rem;      
+    box-sizing: border-box; 
+    height: 100%; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+}
+
+#clear-sort-btn:active {
+    transform: translateY(2px);
+    box-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+    background-color: #ab6434;
+    color: #f3e5ab;
+}
+
 .order-btn input {
     display: none;
 }
@@ -711,6 +746,49 @@ img{
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 8px solid white; /* freccia verso il basso */
+}
+
+.book-list-container {
+    width: 100%;
+    overflow-x: auto; /* Permette lo scroll orizzontale se la tabella è troppo larga */
+    padding: 20px 5% 0 5%;
+}
+
+/* La tabella generata dal JS */
+.books-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    background-color: #fff; /* O il colore del tuo sfondo */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Centratura di testate (th) e celle (td) */
+.books-table th, 
+.books-table td {
+    text-align: center;       /* Centra il testo orizzontalmente */
+    vertical-align: middle;   /* Centra il contenuto verticalmente */
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Stile per le intestazioni */
+.books-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.books-table img {
+    display: inline-block; 
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.books-table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 /*display:none - è come se non esistesse, non occupa piu lo spazio, 

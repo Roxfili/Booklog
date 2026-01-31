@@ -30,7 +30,7 @@ categorySelect.addEventListener("change", () => {
 });
 
 async function loadTBR() {
-    // 1. Recupero i valori dei filtri
+    
     const lengthFilter = document.getElementById('length').value;
     const genreFilter = document.getElementById('genre').value;
     const statusFilter = document.getElementById('length-sub').value;
@@ -38,11 +38,10 @@ async function loadTBR() {
     currentTbrList = [];
 
     try {
-        // 2. Query con JOIN su Books
+        
         let query = sbAuth
             .from('TBR')
             .select(`
-                tbr_count,
                 link,
                 Books!inner (
                     title,
@@ -55,7 +54,7 @@ async function loadTBR() {
                     status
                 )
             `)
-            .order('tbr_count', { ascending: false });
+            //.order('tbr_count', { ascending: false });
 
         
         if (lengthFilter) {
@@ -71,11 +70,35 @@ async function loadTBR() {
             query = query.eq('Books.status', statusBool);
         }
         const { data, error } = await query;
-
         if (error) throw error;
 
-        currentTbrList = data;
-        renderTable(data);
+        // 1. RAGGRUPPAMENTO (creiamo la nostra lista unica)
+        const groupedMap = data.reduce((acc, item) => {
+            const title = item.Books.title;
+            if (!acc[title]) {
+                acc[title] = {
+                    ...item.Books,
+                    links: [item.link],
+                    total_count: 1 // Ogni riga trovata conta come 1
+                };
+            } else {
+                if (item.link && !acc[title].links.includes(item.link)) {
+                    acc[title].links.push(item.link);
+                }
+                acc[title].total_count += 1; // Incrementiamo il conteggio
+            }
+            return acc;
+        }, {});
+
+        // 2. TRASFORMAZIONE IN ARRAY
+        let groupedData = Object.values(groupedMap);
+
+        // 3. ORDINAMENTO (Qui avviene la magia!)
+        // Ordiniamo l'array in base al total_count che abbiamo appena calcolato
+        groupedData.sort((a, b) => b.total_count - a.total_count);
+
+        currentTbrList = groupedData;
+        renderTable(groupedData);
 
     } catch (err) {
         console.error("Errore nel caricamento TBR:", err.message);
@@ -83,10 +106,10 @@ async function loadTBR() {
     }
 }
 
-function renderTable(books) {
+function renderTable(groupedBooks) {
     tbrContainer.innerHTML = ""; 
 
-    if (books.length === 0) {
+    if (groupedBooks.length === 0) {
         tbrContainer.innerHTML = "<p>No books found with these filters. Go add some!</p>";
         return;
     }
@@ -100,22 +123,26 @@ function renderTable(books) {
                     <th>Author</th>
                     <th>Genre</th>
                     <th>Count</th>
-                    <th>Link</th>
+                    <th>Links</th>
                 </tr>
             </thead>
             <tbody>
     `;
 
-    books.forEach(item => {
-        const b = item.Books;
+    groupedBooks.forEach(book => {
+        // Creiamo la lista di icone per ogni link presente nell'array 'links'
+        const linksHTML = book.links
+            .map(link => `<a href="${link}" target="_blank" style="margin-right: 5px;">🔗</a>`)
+            .join("");
+
         html += `
             <tr>
-                <td><img src="${b.cover_link || 'placeholder.jpg'}" width="50"></td>
-                <td><strong>${b.title}</strong>${b.saga ? `<br><small>${b.saga}</small>` : ''}</td>
-                <td>${b.author}</td>
-                <td>${b.genre || '-'}</td>
-                <td>${item.tbr_count}</td>
-                <td><a href="${item.link}" target="_blank">🔗</a></td>
+                <td><img src="${book.cover_link || 'placeholder.jpg'}" width="50" style="border-radius: 4px;"></td>
+                <td><strong>${book.title}</strong>${book.saga ? `<br><small>${book.saga}</small>` : ''}</td>
+                <td>${book.author}</td>
+                <td>${book.genre || '-'}</td>
+                <td>${book.total_count}</td>
+                <td>${linksHTML || '-'}</td>
             </tr>
         `;
     });
@@ -183,19 +210,19 @@ loadBtn.addEventListener('click', () => {
 
 // // Carica tutto all'avvio
 document.addEventListener('DOMContentLoaded', loadTBR);
-category.addEventListener("change", () => {
-  const value = category.value;
+categorySelect.addEventListener("change", () => {
+  const value = categorySelect.value;
 
     if (value === "serie") {
         subcategoryContainer.style.display = "block";
-        subcategory.innerHTML = `
+        subcategorySelect.innerHTML = `
             <option value="">-- Seleziona --</option>
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
              `;
     } else {
         subcategoryContainer.style.display = "none";
-        subcategory.innerHTML = "<option value=''>-- Seleziona --</option>";
+        subcategorySelect.innerHTML = "<option value=''>-- Seleziona --</option>";
     }
 });
 

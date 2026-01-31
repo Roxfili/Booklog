@@ -1,26 +1,102 @@
 async function updateDashboardCounts() {
     try {
         
-        const { count: tbrCount } = await sbAuth
+try {
+        
+        const { data: tbrData, error: tbrError } = await sbAuth
             .from('TBR')
-            .select('*', { count: 'exact', head: true });
+            .select('book_id');
+
+        if (tbrError) throw tbrError;
+
+        const uniqueTbrCount = tbrData ? new Set(tbrData.map(item => item.book_id)).size : 0;
 
         const { count: readCount } = await sbAuth
             .from('Read')
             .select('*', { count: 'exact', head: true });
+        
 
         const tbrElem = document.getElementById('tbr-total');
         const readElem = document.getElementById('read-total');
 
-        if (tbrElem) tbrElem.innerText = tbrCount || 0;
+        if (tbrElem) tbrElem.innerText = uniqueTbrCount || 0;
         if (readElem) readElem.innerText = readCount || 0;
 
+        } catch (err) {
+          console.error("Errore conteggio:", err);
+        }
+
     } catch (err) {
-        console.error("Errore conteggio:", err);
+        console.error("Errore conteggio:", err.message);
     }
+
 }
 
 updateDashboardCounts();
+
+//last read
+
+async function updateLastRead() {
+  const lrTitle = document.getElementById("lr-title");
+  const lrAuthor = document.getElementById("lr-author");
+  const lrDates = document.getElementById("lr-dates");
+  const lrRates = document.getElementById("lr-rates");
+  const lrCover = document.getElementById("lr-cover");
+
+  let { data, error } = await sbAuth
+          .from('Read')
+          .select(`
+              start_date,
+              finish_date,
+              stars,
+              Books!inner (
+                  title,
+                  author,
+                  cover_link
+              )
+          `)
+          .order('finish_date', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+  if (error) {
+    console.error("Errore nel recupero dell'ultimo libro:", error.message);
+  } else {
+      lrTitle.innerText = data.Books.title || "Title";;
+      lrAuthor.innerText = data.Books.author || "Author";
+      const dateRange = data.start_date ? `${formatShortDate(data.start_date)} - ${formatShortDate(data.finish_date)}` : data.finish_date;
+      lrDates.innerText = dateRange || "";
+      lrRates.innerHTML = renderStars(data.stars) || renderStars(0);
+      lrCover.src = data.Books.cover_link || 'img/default_cover.jpg';
+      lrCover.alt = "Book cover";
+      console.log("Widget Last Read aggiornato con successo!");
+  }
+}
+
+function renderStars(rating) {
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+        if (rating >= i) {
+            // Stella Piena
+            starsHTML += '<i class="fas fa-star"></i>';
+        } else if (rating >= i - 0.5) {
+            // Mezza Stella
+            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+            // Stella Vuota (solo contorno)
+            starsHTML += '<i class="far fa-star"></i>';
+        }
+    }
+    return starsHTML;
+}
+
+function formatShortDate(dateStr) {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}`;
+}
+
+updateLastRead()
 
 //pop up prova
 const popup = document.getElementById("popup");
@@ -58,6 +134,8 @@ const closeTbrBtn = document.getElementById("close-tbr-popup");
 // ----- POP UP TBR
 tbrPopBtn.addEventListener("click", () => {
   popupTbr.style.display = "flex"; // display:flex per centrare contenuto
+  loadGenreSuggestions()
+  loadAuthorSuggestions()
 });
 
 closeTbrBtn.addEventListener("click", () => {
@@ -126,19 +204,7 @@ sendBtnTbr.addEventListener("click", async (e) => {
             bookId = newBook.ID;
         }
 
-        // --- STEP 2, 3 e 4 (Logica TBR e Count) ---
-        // Recuperiamo tutti i record TBR per quel libro per calcolare il nuovo count
-        const { data: allTbrEntries } = await sbAuth
-            .from('TBR')
-            .select('tbr_count')
-            .eq('book_id', bookId);
-        
-        const currentMaxCount = allTbrEntries?.length > 0 
-            ? Math.max(...allTbrEntries.map(item => item.tbr_count || 0)) 
-            : 0;
-        const newCount = currentMaxCount + 1;
-
-        // Gestione inserimento o update della riga TBR
+        // Controlla se quel libro ha già quel link specifico
         const { data: sameLinkEntry } = await sbAuth
             .from('TBR')
             .select('ID')
@@ -146,15 +212,16 @@ sendBtnTbr.addEventListener("click", async (e) => {
             .eq('link', link)
             .maybeSingle();
 
-        if (sameLinkEntry) {
-            await sbAuth.from('TBR').update({ tbr_count: newCount }).eq('ID', sameLinkEntry.ID);
-        } else {
+        // Inserisci solo se non esiste già
+        if (!sameLinkEntry) {
             await sbAuth.from('TBR').insert([{
                 book_id: bookId,
                 link: link,
-                add_date: new Date().toISOString().split('T')[0],
-                tbr_count: newCount
+                add_date: new Date().toISOString().split('T')[0]
             }]);
+            console.log("Nuovo link aggiunto alla TBR");
+        } else {
+            alert("Questo link è già presente per questo libro!");
         }
 
         // --- UI Feedback e Reset ---
@@ -177,6 +244,58 @@ sendBtnTbr.addEventListener("click", async (e) => {
     }
 });
 
+async function loadGenreSuggestions() {
+    const datalist = document.getElementById('genre-suggestions');
+
+    // Recuperiamo i generi unici dalla tabella Books
+    const { data, error } = await sbAuth
+        .from('Books')
+        .select('genre'); // Seleziona solo la colonna genre
+
+    if (error) {
+        console.error("Errore nel caricamento dei generi:", error.message);
+        return;
+    }
+
+    if (data) {
+        // Estraiamo i generi, puliamoli da spazi extra e rimuoviamo i duplicati
+        const uniqueGenres = [...new Set(data
+            .map(item => item.genre)
+            .filter(g => g) // Rimuove valori nulli
+        )].sort(); // Ordina alfabeticamente
+
+        // Puliamo il datalist e inseriamo le nuove opzioni
+        datalist.innerHTML = uniqueGenres
+            .map(genre => `<option value="${genre}">`)
+            .join('');
+    }
+}
+
+async function loadAuthorSuggestions() {
+    const datalist = document.getElementById('author-suggestions');
+
+    const { data, error } = await sbAuth
+        .from('Books')
+        .select('author'); 
+
+    if (error) {
+        console.error("Errore nel caricamento degli autori:", error.message);
+        return;
+    }
+
+    if (data) {
+        
+        const uniqueAuthor = [...new Set(data
+            .map(item => item.author)
+            .filter(g => g) 
+        )].sort(); 
+
+        
+        datalist.innerHTML = uniqueAuthor
+            .map(author => `<option value="${author}">`)
+            .join('');
+    }
+}
 
 closeTbrBtn.addEventListener("click", () => {
   popupTbr.style.display = "none";
@@ -314,6 +433,7 @@ sendBtnCur.addEventListener("click", async (e) => {
 
         // 5. Passaggio al Popup Classifica
         await updateDashboardCounts();
+        await updateLastRead()
         popupRead.style.display = "none";
         popupCrForm.reset();
         
