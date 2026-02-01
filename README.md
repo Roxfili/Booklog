@@ -118,7 +118,6 @@ I'm constantly working to make BookLog more intuitive. Planned updates include:
 * **Automatic Cover Fetching:** Integration with OpenLibrary API to automatically find book covers by title or ISBN.
 * **Reading Challenges:** A progress tracker for your yearly reading goals.
 * **Full Reviews:** I'm lazy and never write reviews.I'm successfully procrastinating this feature for as long as possible, but it might eventually show up.
-* **Social Sharing:** Generate "Review Cards" of your favorite books to share on social media.
 
 ## Credits & Goals
 This project was born from a personal need to organize my "BookTok" chaos. It's a work-in-progress journey into modern web development, focusing on clean UI and efficient database management.
