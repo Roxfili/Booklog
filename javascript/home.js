@@ -1,11 +1,11 @@
 import { sbAuth } from './auth_check.js';
 import { renderStars, formatShortDate } from './utils.js';
-
+import { updatePodium, updateBubbleCounts, updateMonthFav } from './recap.js';
 //----------- GLOBAL VARS -----------
 
 let currentNewBookId = null;
 let currentNewBookTitle = "";
-
+const { data: { user } } = await sbAuth.auth.getUser();
 //---------- FUNCTIONS CALLS ------------
 
 updateDashboardCounts();
@@ -20,14 +20,14 @@ async function updateTopThree(bookId, newRank) {
     // if #2: old 2 -> 3.
     
     if (newRank === 1) {
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
-        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year);
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);;
+        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year).eq('user_id', user.id);;
     } else if (newRank === 2) {
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);;
     }
 
-    await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year); 
-    await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year);
+    await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);; 
+    await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year).eq('user_id', user.id);;
 
     const { error } = await sbAuth.from('Top_3_Year').insert([{ 
         book_id: bookId, 
@@ -35,6 +35,7 @@ async function updateTopThree(bookId, newRank) {
         year: year 
     }]);
 
+    updatePodium();
     if (error) {
         console.error("Errore inserimento Top 3:", error.message);
         throw error;
@@ -51,6 +52,7 @@ async function handleMonthlyFavorite(bookId, stars, endDate) {
         .select(`id, book_id`)
         .eq('month', month)
         .eq('year', year)
+        .eq('user_id', user.id)
         .maybeSingle();
 
     if (favError) console.error("Errore recupero favorito:", favError);
@@ -62,6 +64,7 @@ async function handleMonthlyFavorite(bookId, stars, endDate) {
         const { data: oldReadData } = await sbAuth.from('Read')
             .select('stars, Books(title)')
             .eq('book_id', existingFav.book_id)
+            .eq('user_id', user.id)
             .maybeSingle();
 
         const oldStars = oldReadData ? parseFloat(oldReadData.stars) : 0;
@@ -71,16 +74,17 @@ async function handleMonthlyFavorite(bookId, stars, endDate) {
 
         if (newStars > oldStars) {
             
-            await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
+            await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id).eq('user_id', user.id);
         } 
         else if (newStars === oldStars && newStars > 0) {
             
             const chooseNew = confirm(`Tie! Both books have ${newStars} stars. \nDo you want to set "${currentNewBookTitle}" as the new Monthly Favorite instead of "${oldTitle}"?`);
             if (chooseNew) {
-                await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
+                await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id).eq('user_id', user.id);
             }
         }
     }
+    updateMonthFav();
 }
 
 async function updateDashboardCounts() {
@@ -90,7 +94,8 @@ async function updateDashboardCounts() {
         
         const { data: tbrData, error: tbrError } = await sbAuth
             .from('TBR')
-            .select('book_id');
+            .select('book_id')
+            .eq('user_id', user.id);
 
         if (tbrError) throw tbrError;
 
@@ -98,7 +103,8 @@ async function updateDashboardCounts() {
 
         const { count: readCount } = await sbAuth
             .from('Read')
-            .select('*', { count: 'exact', head: true });
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id);
         
 
         const tbrElem = document.getElementById('tbr-total');
@@ -136,6 +142,7 @@ async function updateLastRead() {
                   cover_link
               )
           `)
+          .eq('user_id', user.id)
           .order('finish_date', { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -158,7 +165,8 @@ async function loadGenreSuggestions() {
 
     const { data, error } = await sbAuth
         .from('Books')
-        .select('genre'); 
+        .select('genre')
+        .eq('user_id', user.id); 
 
     if (error) {
         console.error("Error loading:", error.message);
@@ -182,7 +190,8 @@ async function loadAuthorSuggestions() {
 
     const { data, error } = await sbAuth
         .from('Books')
-        .select('author'); 
+        .select('author')
+        .eq('user_id', user.id); 
 
     if (error) {
         console.error("Error loading:", error.message);
@@ -210,6 +219,7 @@ async function prepareTopThreePoll(newTitle) {
     const { data: top3 } = await sbAuth.from('Top_3_Year')
         .select('rank, Books(title)')
         .eq('year', year)
+        .eq('user_id', user.id)
         .order('rank', { ascending: true });
 
     const titles = {
@@ -311,6 +321,7 @@ sendBtnTbr.addEventListener("click", async (e) => {
     const genre = document.getElementById('pu-genre-genre').value.trim();
     const tropes = document.getElementById('pu-trope-genre').value.trim();
     const lengthType = document.getElementById('length').value; // 'serie' or 'standalone'
+    const length = document.getElementById('pu-length-value').value.trim();
 
    
     let statusBool = true; 
@@ -335,6 +346,7 @@ sendBtnTbr.addEventListener("click", async (e) => {
         let { data: existingBook } = await sbAuth
             .from('Books')
             .select('ID')
+            .eq('user_id', user.id)
             .ilike('title', title) 
             .ilike('author', author)
             .maybeSingle();
@@ -342,22 +354,27 @@ sendBtnTbr.addEventListener("click", async (e) => {
         let bookId;
         if (existingBook) {
             bookId = existingBook.ID;
-            await sbAuth.from('Books').update({ status: statusBool }).eq('ID', bookId);
+            await sbAuth.from('Books')
+                        .update({ status: statusBool })
+                        .eq('ID', bookId)
+                        .eq('user_id', user.id);
         } else {
             const { data: newBook, error: bErr } = await sbAuth
                 .from('Books')
                 .insert([{ 
-                    title: title, 
-                    author: author, 
-                    genre: genre,
-                    tropes: tropes,
-                    length: lengthType, 
-                    saga: sagaName, 
-                    serie_position: seriePos, 
-                    cover_link: cover,
-                    status: statusBool 
-                }])
-                .select().single();
+                title: title, 
+                author: author, 
+                genre: genre,
+                tropes: tropes,
+                length: lengthType, 
+                saga: sagaName, 
+                serie_position: seriePos, 
+                saga_total_books: length, 
+                cover_link: cover,
+                status: statusBool,
+                user_id: user.id // 
+            }])
+            .select().single();
             if (bErr) throw bErr;
             bookId = newBook.ID;
         }
@@ -368,14 +385,16 @@ sendBtnTbr.addEventListener("click", async (e) => {
             .select('ID')
             .eq('book_id', bookId)
             .eq('link', link)
+            .eq('user_id', user.id)
             .maybeSingle();
 
         // Insert only if not already there
         if (!sameLinkEntry) {
             await sbAuth.from('TBR').insert([{
-                book_id: bookId,
-                link: link,
-                add_date: new Date().toISOString().split('T')[0]
+            book_id: bookId,
+            link: link,
+            user_id: user.id, 
+            add_date: new Date().toISOString().split('T')[0]
             }]);
         } else {
             alert("This book with this link has already been added");
@@ -489,7 +508,7 @@ sendBtnCur.addEventListener("click", async (e) => {
     try {
         
         let { data: book } = await sbAuth.from('Books')
-            .select('ID, cover_link').ilike('title', title).ilike('author', author).maybeSingle();
+            .select('ID, cover_link').ilike('title', title).ilike('author', author).eq('user_id', user.id).maybeSingle();
         
         let bookId;
         if (!book) {
@@ -501,13 +520,14 @@ sendBtnCur.addEventListener("click", async (e) => {
             bookId = book.ID;
             
             if (!book.cover_link && cover) {
-                await sbAuth.from('Books').update({ cover_link: cover }).eq('ID', bookId);
+                await sbAuth.from('Books').update({ cover_link: cover }).eq('ID', bookId).eq('user_id', user.id);
             }
         }
         
         const { data: tbrCheck } = await sbAuth.from('TBR')
             .delete()
             .eq('book_id', bookId)
+            .eq('user_id', user.id)
             .select();
         
         const isFromTbr = tbrCheck && tbrCheck.length > 0;
@@ -550,7 +570,7 @@ sendBtnStat.addEventListener("click", async (e) => {
     const r3 = document.querySelector('input[name="q3"]:checked')?.value;
 
     const year = new Date().getFullYear();
-    const { data: top3 } = await sbAuth.from('Top_3_Year').select('rank').eq('year', year);
+    const { data: top3 } = await sbAuth.from('Top_3_Year').select('rank').eq('year', year).eq('user_id', user.id);
     const count = top3.length;
 
     let finalRank = null;
@@ -618,6 +638,7 @@ sendBuyBtn.addEventListener("click", async(e) => {
             .select('ID')
             .ilike('title', title)
             .ilike('author', author)
+            .eq('user_id', user.id)
             .maybeSingle();
         
         let bookId;

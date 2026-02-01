@@ -8,6 +8,7 @@ let currentBooksList = [];
 let displayedBooks = [];    
 let ascending = true;
 let lastSelected = null;
+const { data: { user } } = await sbAuth.auth.getUser();
 //----------- FUNCS CALLS -----------
 loadBooks();
 //----------- FUNCS DEFS -----------
@@ -34,6 +35,7 @@ async function loadBooks() {
                 Read (start_date, finish_date, stars, is_from_tbr),
                 Purchase (price, shop_date)
             `)
+            .eq('user_id', user.id);
         const { data, error } = await query;
         if (error) throw error;
 

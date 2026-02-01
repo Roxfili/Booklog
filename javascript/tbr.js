@@ -3,7 +3,9 @@ import { sbAuth } from './auth_check.js';
 //TBR PAGE
 //----------- GLOBAL VARS -----------
 let currentTbrList = [];
+const { data: { user } } = await sbAuth.auth.getUser();
 //----------- FUNCS CALLS -----------
+loadTBR();
 //----------- FUNCS DEFS -----------
 async function loadTBR() {
     
@@ -30,9 +32,11 @@ async function loadTBR() {
                     saga,
                     serie_position,
                     cover_link,
-                    status
+                    status,
+                    saga_total_books
                 )
             `)
+            .eq('user_id', user.id);
             //.order('tbr_count', { ascending: false });
 
         
@@ -132,6 +136,7 @@ function renderTable(groupedBooks) {
                     <th>Author</th>
                     <th>Genre</th>
                     <th>Tropes</th>
+                    <th>Position</th>
                     <th>Count</th>
                     <th>Links</th>
                 </tr>
@@ -144,7 +149,7 @@ function renderTable(groupedBooks) {
         const linksHTML = book.links
             .map(link => `<a href="${link}" target="_blank" style="margin-right: 5px;">🔗</a>`)
             .join("");
-
+     
         html += `
             <tr>
                 <td><img src="${book.cover_link || 'placeholder.jpg'}" width="50" style="border-radius: 4px;"></td>
@@ -152,6 +157,7 @@ function renderTable(groupedBooks) {
                 <td>${book.author}</td>
                 <td>${book.genre || '-'}</td>
                 <td class="col-tropes">${book.tropes || '-'}</td>
+                <td>${book.serie_position || '-'}/${book.saga_total_books || '-'}</td>
                 <td>${book.total_count}</td>
                 <td>${linksHTML || '-'}</td>
             </tr>

@@ -1,6 +1,9 @@
 import { sbAuth } from './auth_check.js';
 import { renderStars, formatShortDate } from './utils.js';
 
+const currYear = new Date().getFullYear();
+const { data: { user } } = await sbAuth.auth.getUser();
+
 //----------- FUNCS CALLS -----------
 
 updateBubbleCounts();
@@ -9,7 +12,7 @@ updateMonthFav();
 
 //----------- RECAP BUBBLES -----------
 
-async function updateBubbleCounts() {
+export async function updateBubbleCounts() {
     try {
         
         try {
@@ -20,7 +23,9 @@ async function updateBubbleCounts() {
             const { data: tbrData, error: tbrError } = await sbAuth
                 .from('Read')
                 .select('book_id')
+                .eq('user_id', user.id)
                 .eq('is_from_tbr', true)
+                .eq('user_id', user.id)
                 .lte('finish_date', endDate)
                 .gte('finish_date', startDate);
 
@@ -30,17 +35,20 @@ async function updateBubbleCounts() {
   
             const { count: readCount } = await sbAuth
                 .from('Read')
-                .select('*', { count: 'exact', head: true });
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id);
 
             const { count: buyCount } = await sbAuth
                 .from('Purchase')
-                .select('*', { count: 'exact', head: true });
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id);
 
             const { data: purchaseData, error: purchaseError } = await sbAuth
                 .from('Purchase')
                 .select('price')
                 .gte('shop_date', startDate)
-                .lte('shop_date', endDate);
+                .lte('shop_date', endDate)
+                .eq('user_id', user.id);
 
             if (purchaseError) {
                 console.error("Errore recupero prezzi:", purchaseError);
@@ -69,64 +77,65 @@ async function updateBubbleCounts() {
 
 //----------- PODIUM -----------
 
-async function updatePodium() {
-
-    try{
-        const currYear = new Date().getFullYear();
-
-        const{data:podiumBooks, error: firstError} = await sbAuth
-                    .from('Books')
-                    .select(`
-                        author,
-                        title,
-                        cover_link,
-                        Top_3_Year!inner(rank, year),
-                        Read(stars, start_date, finish_date)
-                    `)
-                    .eq('Top_3_Year.year', currYear)
-                    .order('rank', { foreignTable: 'Top_3_Year', ascending: true });
-
-        if (firstError) throw firstError;
-
-
-        for (let i = 0; i < 3; i++) {
-            const book = podiumBooks[i];
-            const n = i + 1; 
-
+export async function updatePodium() {
+    try {
+        
+        const [book1, book2, book3] = await Promise.all([
+            getPodiumBook(1),
+            getPodiumBook(2),
+            getPodiumBook(3)
+        ]);
+        const books = [book1, book2, book3];
+        books.forEach((book, i) => {
+            const n = i + 1;
+            const imgEl = document.getElementById(`podium-image${n}`);
+            const titleEl = document.getElementById(`podium-title${n}`);
+            const authorEl = document.getElementById(`podium-author${n}`);
+            const datesEl = document.getElementById(`podium-dates${n}`);
+            const rateEl = document.getElementById(`podium-rate${n}`);
             if (book) {
-                document.getElementById(`podium-image${n}`).src = book.cover_link || 'placeholder.jpg';
-                document.getElementById(`podium-title${n}`).textContent = book.title;
-                document.getElementById(`podium-author${n}`).textContent = book.author;
-                
-                const readData = book.Read[0]; 
-                let dateText = "Non letta";
+                imgEl.src = book.cover_link || 'img/dragon.png';
+                titleEl.textContent = book.title;
+                authorEl.textContent = book.author;
+                const readData = book.Read.find(r => r.user_id === user.id) || book.Read[0];
                 if (readData) {
-                    dateText = readData.start_date 
+                    datesEl.textContent = readData.start_date 
                         ? `${formatShortDate(readData.start_date)} - ${formatShortDate(readData.finish_date)}` 
                         : formatShortDate(readData.finish_date);
+                    rateEl.innerHTML = renderStars(readData.stars);
                 }
-                document.getElementById(`podium-dates${n}`).textContent = dateText;
-
-                document.getElementById(`podium-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
             } else {
-                document.getElementById(`podium-title${n}`).textContent = "TBD";
-                document.getElementById(`podium-image${n}`).src = 'img/dragon.png';
-                document.getElementById(`podium-author${n}`).textContent = "Author";
-                document.getElementById(`podium-dates${n}`).textContent = "Date";
-                document.getElementById(`podium-rate${n}`).innerHTML = renderStars(0);
-            
+                titleEl.textContent = "TBD";
+                imgEl.src = 'img/dragon.png';
+                authorEl.textContent = "Author";
+                datesEl.textContent = "Date";
+                rateEl.innerHTML = renderStars(0);
             }
-        }
+        });
     } catch (err) {
         console.error("Errore podio:", err);
     }
-
 }
 
+async function getPodiumBook(rank) {
+    const { data } = await sbAuth
+        .from('Books')
+        .select(`
+            title, author, cover_link,
+            Top_3_Year!inner(rank, year, user_id),
+            Read(stars, start_date, finish_date, user_id)
+        `)
+        .eq('user_id', user.id)
+        .eq('Top_3_Year.year', currYear)
+        .eq('Top_3_Year.rank', rank) 
+        .eq('Top_3_Year.user_id', user.id)
+        .maybeSingle(); 
+    return data;
+}
 //-------- MONTHLY FAVES ----------
 
 
-async function updateMonthFav() {
+export async function updateMonthFav() {
 
     try{
         const currYear = new Date().getFullYear();
@@ -138,6 +147,7 @@ async function updateMonthFav() {
                         Monthly_Favourites!inner(month, year),
                         Read(stars)
                     `)
+                    .eq('user_id', user.id)
                     .eq('Monthly_Favourites.year', currYear)
                     .order('month', { foreignTable: 'Monthly_Favourites', ascending: true });
 
