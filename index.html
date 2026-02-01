@@ -6,279 +6,45 @@
     <link href='https://fonts.googleapis.com/css?family=Alkatra' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <title>BOOKLOG</title>
-    <style>
-        html { display: none; }
-    </style>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/auth_check.js"></script>
-
+    <title>LOGIN</title>
 </head>
 <body>
-    <div class="nav-bar">
-        <a class="page-button logout-btn" id="logoutBtn" href="#">logout</a>
-    </div>
     <div class="container">
         
         <header>
             <section class="title-container">
                 <div class="drag left"></div>
-                <h1 class="title-home">BookLog</h1>
+                <h1 class="title-home" id="form-title">Welcome</h1>
                 <div class="drag right"></div>
             </section>
         </header>
 
         <main>
-            <div class="change-page-but">
-                <a class="page-button blue-button" href="recap.html">
-                    <!-- <button class="rec-but">
-                        RECAP 2025
-                    </button> -->
-                    YEAR RECAP 
-                </a>
+            <div class="login-container">
+                <form class="login-form">
+                    <h2 style="color:aquamarine">Do I know You???? &#128530;</h2>
+                    <br>
+                    <div class="input-group">
+                        <label for="username">Username (email)</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">Login</button>
+
+                    <div class="footer-links">
+                        <span id="toggle-text">Don't have an account yet?</span> 
+                        <a href="#" id="toggle-link">Register</a>
+                    </div>
+                </form>
             </div>
-
-            <section id="info">
-                <div class="last-read">
-                    <p>LAST READ:</p>
-                
-                    <div class="last-read-details">
-                        <img id="lr-cover" src="img/caraval_cover.jpg" alt="book cover">
-                    
-                        <div class="book-info">
-                            <p id="lr-title"><strong>Caraval</strong></p>
-                            <p id="lr-author">Stephanie Garber</p>
-                            <p id="lr-dates">15/01-16/01</p>
-                            <p id="lr-rates">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </p>
-                            
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="count">
-                    <p>TBR COUNT:</p>
-                    <p class="numbr" id="tbr-total">0</p>
-                    <p>READING COUNT <br>(from Jan 2026):</p>
-                    <p class="numbr" id="read-total">0</p>
-                </div>
-            </section>
-
-            <section id="quotes">
-                <p>“I believe there are far more possibilities than happily ever after or tragedy. Every story has the potential for infinite endings.”
-                    <span>― Stephanie Garber, Once Upon a Broken Heart</span>
-                </p>
-                <p>
-                    “Every person has the power to change their fate if they are brave enough to fight for what they desire more than anything.”
-                    <span>― Stephanie Garber, Caraval</span>         
-                </p>
-                <p>
-                    “Every good story needs a villain.
-                    But the best villains are the ones you secretly like.”
-                    <span>― Stephanie Garber, Legendary</span>
-                </p>
-                <p>
-                    “Every story has four parts - the beginning, the middle, the almost ending, and the true ending.”
-                    <span>― Stephanie Garber, Legendary</span>
-                </p>
-                <p>
-                    “Happy endings can be caught, but they are difficult to hold on to. They are dreams that want to escape the night. They are treasure with wings. They are wild, feral, reckless things that need to be constantly chased, or they will certainly run away.”
-                    <span>― Stephanie Garber, The Ballad of Never After</span>
-                </p>
-                <p>
-                    “Not everyone gets a true ending. There are two types of endings because most people give up at the part of the story where things are the worst, where the situation feels hopeless. But that’s when hope is needed most. only those who persevere can find their true ending.”
-                    <span>― Stephanie Garber, Legendary</span>
-                </p>
-                <p>
-                    “Libraries were full of ideas—perhaps the most dangerous and powerful of all weapons.”
-                    <span>― Sarah J. Maas, Throne of Glass</span>
-                </p>
-                <p>
-                    “No. I can survive well enough on my own— if given the proper reading material.”
-                    <span>― Sarah J. Maas, Throne of Glass</span>
-                </p>
-                <p>
-                    “Don't feel bad for one moment about doing what brings you joy.”
-                    <span>― Sarah J. Maas, A Court of Thorns and Roses</span>
-                </p>
-                <p>
-                    “...her dearest friends are characters in books.”
-                    <span>― Sarah J. Maas, Heir of Fire</span>
-                </p>
-            </section>
-        
-        </div>
-        <table>
-            <tr>
-                <td class="index-table"><button id="add-tbr-pop" class="page-button orange-button">Add to TBR</button></td>
-                <div id="popupTbr" class="popup">
-                    <div class="popup-content">
-                        <span id="close-tbr-popup" class="popup-close">&times;</span>
-                        <h2>Add to TBR</h2>
-                        <p>(title and author required)</p>
-                        <form id="popup-tbr-form">
-                            <label for="tbr-title"><u>Title:</u></label>
-                            <input type="text" id="tbr-title" placeholder="Caraval" required> <br>
-                            <label for="tbr-author"><u>Author:</u></label>
-                            <input type="text" id="tbr-author" placeholder="Stephanie Garber" required list="author-suggestions"> <br>
-                            <datalist id="author-suggestions">
-                            </datalist>
-                            <label for="pu-link-value" >Link:</label>
-                            <input type="text" id="pu-link-value" placeholder="https://www.goodreads.com"> <br>
-                            <label for="pu-cover-value">Cover Link:</label>
-                            <input type="text" id="pu-cover-value" placeholder="https://image-url.com"> <br>
-                            <label for="pu-genre-value" >Genre:</label>
-                            <input type="text" id="pu-title-genre" placeholder="Fantasy" list="genre-suggestions"> <br>
-                            <datalist id="genre-suggestions">
-                            </datalist>
-                            <label for="pu-trope-value" >Tropes:</label>
-                            <input type="text" id="pu-trope-genre" placeholder="Dark Fantasy, Dark Romance, Just One Bed ..."> <br>
-                            <label for="length">Length:</label>
-                                <select id="length">
-                                    <option value="">-- Select --</option>
-                                    <option value="serie">Serie</option>
-                                    <option value="standalone">Standalone</option>
-                                </select>
-                            <!-- solo per saghe -->
-                                
-                            <div id="subcategory-length" style="display:none;">
-                                <label for="pu-saga-name">Saga Name:</label>
-                                <input type="text" id="pu-saga-name" placeholder="Caraval"> <br>
-                                <label for="pu-prog-value" >Position in saga:</label>
-                                <input type="number" id="pu-prog-value" placeholder="1"> <br>
-                                <label for="pu-length-value" >Books in saga:</label>
-                                <input type="number" id="pu-length-value" placeholder="4"> <br>
-                                <label for="pu-length-sub">Status:</label>
-                                <select id="pu-length-sub">
-                                    <option value="">-- Select --</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Completed</option>
-                                </select>
-                            </div>
-                
-                        </form>
-                        <button type="submit" id="send-tbr" class="confirm-button">send</button>
-                    </div>
-                </div>
-                <div id="judgy-popup" class="popup">
-                    <div class="popup-content">
-                        <span id="close-judgy-popup" class="popup-close">&times;</span>
-                        <h2>I SEE U</h2>
-                        <p id="judgy-message-text"></p> 
-                    </div>
-                </div>
-
-                <td class="index-table"><button id="add-read-pop" class="page-button orange-button">Add Read Book</button></td>
-                <div id="popupCurRead" class="popup">
-                    <div class="popup-content">
-                        <span id="close-CR-popup" class="popup-close">&times;</span>
-                        <h2>New Read</h2>
-                        <p>(YAY)</p>
-                        <form id="popup-CR-form">
-                            <label for="read-title"><u>Title:</u></label>
-                            <input type="text" id="read-title" placeholder="Caraval" required> <br>
-                            <label for="read-author"><u>Author:</u></label>
-                            <input type="text" id="read-author" placeholder="Stephanie Garber" required> <br>
-                            <label for="pu-start-value" >Start date:</label>
-                            <input type="date" id="pu-start-value" placeholder="01/01/2026"> <br>
-                            <label for="read-end" >Finish date:</label>
-                            <input type="date" id="read-end" placeholder="01/01/2026"> <br>
-                            <label for="read-cover">Cover Link:</label>
-                            <input type="text" id="read-cover" placeholder="https://image-url.com"> <br>
-                            <label for="read-rate" >Rating:</label>
-                            <input type="number" id="read-rate" placeholder="5" min="0" max="5" step="0.5"> <br>
-                        </form>
-
-                        <button id="send-curRead" class="confirm-button">send</button>
-                        
-                    </div>
-                </div>
-                <div id="popup-stat" class="popup">
-                    <div class="popup-content">
-                        <span id="close-stat-popup" class="popup-close">&times;</span>
-                        <form id="cascade-form">                                     
-                            <div class="question" id="q1">
-                                <p>Better than 3?</p>
-                                <label>
-                                    <input type="radio" name="q1" value="yes"> Yes
-                                </label>
-                                <label>
-                                    <input type="radio" name="q1" value="no"> No
-                                </label>
-                            </div>
-                            <div class="question" id="q2" style="display:none;">
-                                <p>Better than 2?</p>
-                                <label>
-                                    <input type="radio" name="q2" value="yes"> Yes
-                                </label>
-                                <label>
-                                    <input type="radio" name="q2" value="no"> No
-                                </label>
-                            </div>
-                            <div class="question" id="q3" style="display:none;">
-                                <p>Better than 1?</p>
-                                <label>
-                                    <input type="radio" name="q3" value="yes"> Yes
-                                </label>
-                                <label>
-                                    <input type="radio" name="q3" value="no"> No
-                                </label>
-                            </div>
-                            <button type="submit" id="send-stats" class="confirm-button">submit</button>
-                        </form>
-                    </div>
-                </div>
-            </tr>
-            <tr>
-                <td class="index-table">
-                    <div class="change-page-but" style="margin:0">
-                        <a class="page-button orange-button" href="tbr.html">
-                            Show TBR 
-                        </a>
-                    </div>
-                </td>
-                <td class="index-table">
-                    <div class="change-page-but" style="margin:0">
-                        <a class="page-button orange-button" href="books.html">
-                            Show books 
-                        </a>
-                    </div>
-                    
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2"> <button id="open-buy-popup" class="page-button orange-button">I bought a book</button></td>
-                <div id="popupBuy" class="popup">
-                    <div class="popup-content">
-                        <span id="close-buy-popup" class="popup-close">&times;</span>
-                        <h2>Shopping?</h2>
-                        <p>(&#128184;&#128184;&#128184;)</p>
-                        <form id="popup-buy-form">
-                            <label for="buy-title-value"><u>Title:</u></label>
-                            <input type="text" id="buy-title-value" placeholder="Caraval" required> <br>
-                            <label for="buy-author-value"><u>Author:</u></label>
-                            <input type="text" id="buy-author-value" placeholder="Stephanie Garber" required> <br>
-                            <label for="buy-price-value" >Price:</label>
-                            <input type="number" id="buy-price-value" placeholder="€0.00" step="0.01"> <br>
-                            <label for="buy-date-value" >Date:</label>
-                            <input type="date" id="buy-date-genre" placeholder="01/01/2026"> <br>
-                        </form>
-
-                        <button id="send-buy" class="confirm-button">send</button>
-                        
-                    </div>
-                </div>
-            </tr>
-        </table>
+        </main>
     </div>
-    </main>
-    <script src="javascript/home.js"></script>
-    <script src="javascript/logout.js"></script>
+
+    <script type="module" src="./javascript/login.js"></script>
 </body>
 </html>

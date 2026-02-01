@@ -175,11 +175,12 @@ main{
 
 /*home page*/
 .container{
-    width:70%;
+    width:85%;
     margin:0 auto;
     text-align: center;
     background-color: rgb(250, 235, 215, 0.8);
     border-radius: 20px;
+    margin-top: 20px;
 }
 
 .title-container {
@@ -638,7 +639,7 @@ img{
 }
 .tbr-list-container{
     margin: 0 auto;
-    width: 80%;
+    width: 90%;
     height: 400px;
     text-align: center;
     background-color: whitesmoke;
@@ -775,13 +776,15 @@ img{
 }
 
 .book-list-container {
-    width: 100%;
-    overflow-x: auto; /* Permette lo scroll orizzontale se la tabella è troppo larga */
-    padding: 20px 5% 0 5%;
+    width: 90%;
+    margin: 0 auto;
+    overflow-x: auto; 
+    padding-top: 20px;
+    
 }
 
 /* La tabella generata dal JS */
-.books-table {
+.books-table, .tbr-table {
     width: 100%;
     border-collapse: collapse;
     margin: 0 auto;
@@ -792,7 +795,9 @@ img{
 
 /* Centratura di testate (th) e celle (td) */
 .books-table th, 
-.books-table td {
+.books-table td, 
+.tbr-table th,
+.tbr-table td {
     text-align: center;       /* Centra il testo orizzontalmente */
     vertical-align: middle;   /* Centra il contenuto verticalmente */
     padding: 10px;
@@ -800,7 +805,8 @@ img{
 }
 
 /* Stile per le intestazioni */
-.books-table th {
+.books-table th,
+.tbr-table th {
     background-color: #f8f9fa;
     font-weight: bold;
     text-transform: uppercase;
@@ -815,6 +821,25 @@ img{
 
 .books-table tbody tr:hover {
     background-color: #f1f1f1;
+}
+
+.col-tropes {
+    max-width: 200px;       
+    max-height: 80px;        
+    overflow-y: auto;        
+    padding: 8px;
+    font-size: 0.85rem;      
+   
+    border-radius: 4px;
+  
+}
+
+.col-tropes::-webkit-scrollbar {
+    width: 4px;
+}
+.col-tropes::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }
 
 /*display:none - è come se non esistesse, non occupa piu lo spazio, 

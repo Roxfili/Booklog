@@ -11,12 +11,12 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/auth_check.js"></script>
+    <script type="module" src="./javascript/auth_check.js"></script>
     
 </head>
 <body>
     <div class="nav-bar">
-        <a class="page-button back-home" href="index.html">&larr; home</a>
+        <a class="page-button back-home" href="home.html">&larr; home</a>
         <a class="page-button logout-btn" id="logoutBtn" href="#">logout</a>
     </div>
 
@@ -56,6 +56,14 @@
                                 <option value="romantasy">Romantasy</option>
                             </select>
                         </div>
+                        <div class="first-field">
+                            <label for="tropes">Trope:</label>
+                            <select id="tropes">
+                                <option value="">-- Select --</option>
+                                <option value="oob">Only one bed</option>
+                                <option value="eol">Enemies to Lovers</option>
+                            </select>
+                        </div>
                         <button class="confirm-button tbr-confirm">
                             load TBR list
                         </button>
@@ -79,11 +87,11 @@
     </div>
 
     <div class="change-page-but">
-        <a class="page-button blue-button" href="index.html">
+        <a class="page-button blue-button" href="home.html">
             &larr; Home 
         </a>
     </div>
-    <script src="javascript/tbr.js"></script>
-    <script src="javascript/logout.js"></script>
+    <script type="module" src="./javascript/tbr.js"></script>
+    <script type="module" src="./javascript/logout.js"></script>
 </body>
 </html>

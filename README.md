@@ -9,11 +9,15 @@ We all have that social media folder (TikTok, Instagram, YouTube) overflowing wi
 * **Year review** A sum up of your reading year, showing also your favourite book for each month.
 
 ## Tech Stack
-* **HTML5 / CSS3:** The entire UI is handcrafted without external UI frameworks. It features a fully responsive layout and custom-themed components
+* **HTML5 / CSS3:** The entire UI is handcrafted without external UI frameworks. It features a fully responsive layout and custom-themed components.
+* **Development Environment:** Powered by Node.js and Vite. This setup enables fast Hot Module Replacement, secure environment variable handling, and an optimized build process.
+* **Backend & Auth:** Integrated with Supabase (PostgreSQL) for real-time database management and secure user authentication.
 * **FontAwesome:** For social media icons and the rating system.
 * **Google Fonts:** Using editorial fonts.
 
 ## DB config
+> **Note:** To set up the database, run the following SQL script in your Supabase SQL Editor. It will create the necessary tables and relationships.
+
 create table public."Books" (
   title character varying not null,
   author character varying not null,
@@ -94,7 +98,30 @@ create table public."Top_3_Year" (
   constraint Top_3_Year_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
 ) TABLESPACE pg_default;
 
-## How to use it
-1.  **Clone** the repo: `git clone https://github.com/Roxfili/booklog.git`
-2.  Open `index.html` in your favorite browser.
-3.  **insert your DB info** in javascript/auth_check.js. The application is made for a SuperBase DAtabase. To connect yours insert your URL and public key as 'AUTH_URL' and 'AUTH_KEY'
+## How to install & run
+1. **Clone** the repo:  
+   `git clone https://github.com/Roxfili/booklog.git`
+2. **Install dependencies**:  
+   Navigate to the folder and run: `npm install`
+3. **Set up your environment**:  
+   Create a `.env` file in the root folder and add your Supabase credentials:
+   ```text
+   VITE_SUPABASE_URL=your_supabase_url_here
+   VITE_SUPABASE_KEY=your_supabase_anon_key_here
+4. **Run the app**:
+    Start the development server: npx vite
+    Open the link provided in the terminal (usually http://localhost:5173)
+
+## Future Features
+I'm constantly working to make BookLog more intuitive. Planned updates include:
+* **Advanced Statistics:** Visual charts to see your most read genres and monthly reading pace.
+* **Automatic Cover Fetching:** Integration with OpenLibrary API to automatically find book covers by title or ISBN.
+* **Reading Challenges:** A progress tracker for your yearly reading goals.
+* **Full Reviews:** I'm lazy and never write reviews.I'm successfully procrastinating this feature for as long as possible, but it might eventually show up.
+* **Social Sharing:** Generate "Review Cards" of your favorite books to share on social media.
+
+## Credits & Goals
+This project was born from a personal need to organize my "BookTok" chaos. It's a work-in-progress journey into modern web development, focusing on clean UI and efficient database management.
+
+---
+**Made with insomnia by me <3**

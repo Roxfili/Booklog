@@ -1,3 +1,4 @@
+import { sbAuth } from './auth_check.js';
 //----------- RECAP BUBBLES -----------
 async function updateBubbleCounts() {
     try {

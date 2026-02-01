@@ -1,4 +1,4 @@
-
+import { sbAuth } from './auth_check.js';
 //BOOKS PAGE FILTER OPTIONS SCRIPT
 
 const filterSelect = document.getElementById("filter");
@@ -118,7 +118,7 @@ function renderTable(groupedBooks) { //apposto
                 <td><strong>${book.title}</strong>${book.saga ? `<br><small>${book.saga}</small>` : ''}</td>
                 <td>${book.author}</td>
                 <td>${book.genre || '-'}</td>
-                <td>${book.tropes || '-'}</td>
+                <td class="col-tropes">${book.tropes || '-'}</td>
                 <td>${dates}</td>
                 <td>${book.price ? `<strong>${book.price}</strong><br><small>${book.shop_date}</small>` : ' nope '}</td>
                 <td>${book.stars ? `<strong>${renderStars(book.stars)}</strong>` : `<strong>${linksHTML}</strong>`}</td>
@@ -130,14 +130,7 @@ function renderTable(groupedBooks) { //apposto
     booksContainer.innerHTML = html;
 }
 
-const data = {
-    author: ["J.K. Rowling", "Brandon Sanderson", "George R.R. Martin"],
-    genre: ["Fantasy", "Sci-Fi", "Romance", "Romantasy"],
-    title: ["Harry Potter", "Mistborn", "Game of Thrones"],
-    status: [ "In Progress", "Completed", "Standalone" ],
-    serie: [ "A Court of Thorns and Roses", "Caraval", "Throne of Glass", "Once Upon A Broken Heart", "Powerless" ],
-    bought: [ "Yes", "No" ]
-};
+
  //FILTRO TABELLA
 filterSelect.addEventListener("change", () => {
     const type = filterSelect.value;
@@ -160,7 +153,18 @@ filterSelect.addEventListener("change", () => {
         options = [...new Set(currentBooksList.map(b => b.status))].filter(Boolean);
     } else if (type === "serie") {
         options = [...new Set(currentBooksList.map(b => b.saga))].filter(Boolean);
-    } else {
+    } else if (type === "tropes") {
+        // 1. Prendiamo tutte le stringhe delle tropes
+        const allTropesStrings = currentBooksList.map(b => b.tropes).filter(Boolean);
+        
+        // 2. Le dividiamo dove c'è il trattino, puliamo gli spazi e mettiamo tutto in un unico array
+        const individualTropes = allTropesStrings.flatMap(str => 
+            str.split('-').map(t => t.trim())
+        );
+
+        // 3. Rimuoviamo i duplicati
+        options = [...new Set(individualTropes)];
+    }else {
         // Per author, genre, title prendiamo direttamente la proprietà
         options = [...new Set(currentBooksList.map(b => b[type]))].filter(Boolean);
     }

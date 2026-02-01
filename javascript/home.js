@@ -1,3 +1,4 @@
+import { sbAuth } from './auth_check.js';
 //--------INITIAL COUNTS----------
 async function updateDashboardCounts() {
   try {
@@ -107,7 +108,8 @@ sendBtnTbr.addEventListener("click", async (e) => {
     const rawAuthor = document.getElementById('tbr-author').value.trim(); // Corretto
     const link = document.getElementById('pu-link-value').value.trim();
     const cover = document.getElementById('pu-cover-value').value.trim();
-    const genre = document.getElementById('pu-title-genre').value.trim();
+    const genre = document.getElementById('pu-genre-genre').value.trim();
+    const tropes = document.getElementById('pu-trope-genre').value.trim();
     const lengthType = document.getElementById('length').value; // 'serie' o 'standalone'
 
     // --- 2. Logica Condizionale Status e Saga ---
@@ -150,6 +152,7 @@ sendBtnTbr.addEventListener("click", async (e) => {
                     title: title, 
                     author: author, 
                     genre: genre,
+                    tropes: tropes,
                     length: lengthType, 
                     saga: sagaName, 
                     serie_position: seriePos, 

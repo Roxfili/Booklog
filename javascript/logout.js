@@ -1,3 +1,4 @@
+import { sbAuth } from './auth_check.js';
 document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logoutBtn');
 

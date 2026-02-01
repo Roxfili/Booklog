@@ -1,8 +1,4 @@
-//DB
-// const supabaseUrl = "https://aiobatomkcovcgbcjuef.supabase.co";
-// const supabaseKey = "sb_publishable_qSEddXtkWGocCmpvVVFbHA_iHWIQynQ";
-
-// const sbAuth = supabase.createClient(supabaseUrl, supabaseKey);
+import { sbAuth } from './auth_check.js';
 // 2. Selezione elementi
 const loginForm = document.querySelector('.login-form');
 const toggleLink = document.getElementById('toggle-link');
@@ -51,16 +47,16 @@ loginForm.addEventListener('submit', async (e) => {
 
     try {
         if (isLoginMode) {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            const { data, error } = await sbAuth.auth.signInWithPassword({ email, password });
             if (error) throw error;
             
-            window.location.href = 'index.html';
+            window.location.href = 'home.html';
         } else {
-            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            const { data, error } = await sbAuth.auth.signUp({ email, password });
             if (error) throw error;
             alert("Registrazione effettuata! Controlla l'email.");
             if (data.user && data.session) {
-                window.location.href = 'index.html';
+                window.location.href = 'home.html';
             }
         }
     } catch (err) {

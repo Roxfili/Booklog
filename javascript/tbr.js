@@ -1,4 +1,4 @@
-
+import { sbAuth } from './auth_check.js';
 //TBR PAGE
 //tbr options script
 const loadBtn = document.querySelector('.tbr-confirm');
@@ -33,8 +33,10 @@ async function loadTBR() {
     
     const lengthFilter = document.getElementById('length').value;
     const genreFilter = document.getElementById('genre').value;
+    const tropeFilter = document.getElementById('tropes').value;
     const statusFilter = document.getElementById('length-sub').value;
 
+    
     currentTbrList = [];
 
     try {
@@ -47,6 +49,7 @@ async function loadTBR() {
                     title,
                     author,
                     genre,
+                    tropes,
                     length,
                     saga,
                     serie_position,
@@ -63,6 +66,10 @@ async function loadTBR() {
         if (genreFilter) {
             
             query = query.ilike('Books.genre', genreFilter);
+        }
+        if (tropeFilter) {
+            
+            query = query.ilike('Books.tropes', `%${tropeFilter}%`);
         }
         if (lengthFilter === 'serie' && statusFilter) {
             
@@ -99,11 +106,46 @@ async function loadTBR() {
 
         currentTbrList = groupedData;
         renderTable(groupedData);
+        if (!lengthFilter && !genreFilter && !tropeFilter && !statusFilter) {
+            updateTBRFilters(groupedData);
+        }
 
     } catch (err) {
         console.error("Errore nel caricamento TBR:", err.message);
         tbrContainer.innerHTML = `<p>Error loading books: ${err.message}</p>`;
     }
+}
+
+function updateTBRFilters(books) {
+    const lengthSelect = document.getElementById('length');
+    const genreSelect = document.getElementById('genre');
+    const tropesSelect = document.getElementById('tropes');
+
+    // 1. Estraiamo i valori unici dai dati dei libri
+    // Per Genre e Length prendiamo il valore così com'è
+    const genres = [...new Set(books.map(b => b.genre))].filter(Boolean).sort();
+    const lengths = [...new Set(books.map(b => b.length))].filter(Boolean).sort();
+    
+    // 2. Per le Tropes: dividiamo per '-', puliamo gli spazi e appiattiamo
+    const tropes = [...new Set(
+        books.flatMap(b => b.tropes ? b.tropes.split('-').map(t => t.trim()) : [])
+    )].filter(Boolean).sort();
+
+    // 3. Funzione per svuotare e riempire le select
+    const renderOptions = (selectElement, options, placeholder) => {
+        if (!selectElement) return;
+        const currentValue = selectElement.value; // Conserva cosa avevi selezionato
+        
+        selectElement.innerHTML = `<option value="">${placeholder}</option>` + 
+            options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+        
+        selectElement.value = currentValue; // Evita che si resetti mentre lo usi
+    };
+
+    // 4. Eseguiamo il riempimento
+    renderOptions(lengthSelect, lengths, "-- Select --");
+    renderOptions(genreSelect, genres, "-- Select --");
+    renderOptions(tropesSelect, tropes, "-- Select --");
 }
 
 function renderTable(groupedBooks) {
@@ -122,6 +164,7 @@ function renderTable(groupedBooks) {
                     <th>Title</th>
                     <th>Author</th>
                     <th>Genre</th>
+                    <th>Tropes</th>
                     <th>Count</th>
                     <th>Links</th>
                 </tr>
@@ -141,6 +184,7 @@ function renderTable(groupedBooks) {
                 <td><strong>${book.title}</strong>${book.saga ? `<br><small>${book.saga}</small>` : ''}</td>
                 <td>${book.author}</td>
                 <td>${book.genre || '-'}</td>
+                <td class="col-tropes">${book.tropes || '-'}</td>
                 <td>${book.total_count}</td>
                 <td>${linksHTML || '-'}</td>
             </tr>

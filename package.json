@@ -1,0 +1,28 @@
+{
+  "name": "booklog",
+  "version": "1.0.0",
+  "description": "A custom HTML dashboard designed to bridge the gap between social media discovery and actual reading. BookLog provides a dedicated space to organize and track those 'TBR' book recommendation videos that often get lost in social media folders, transforming saved links into a curated personal library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roxfili/Booklog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Roxfili/Booklog/issues"
+  },
+  "homepage": "https://github.com/Roxfili/Booklog#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.93.3",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}

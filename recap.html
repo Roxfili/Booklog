@@ -10,14 +10,12 @@
     <style>
         html { display: none; }
     </style>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/auth_check.js"></script>
+    <script type="module" src="./javascript/auth_check.js"></script>
 </head>
 <body>
 
     <div class="nav-bar">
-        <a class="page-button back-home" href="index.html">&larr; home</a>
+        <a class="page-button back-home" href="home.html">&larr; home</a>
         <a class="page-button logout-btn" id="logoutBtn" href="#">logout</a>
     </div>
 
@@ -187,14 +185,14 @@
         </main>
     </div>
     <div class="change-page-but">
-        <a class="page-button blue-button" href="index.html">
+        <a class="page-button blue-button" href="home.html">
             <!-- <button class="rec-but">
                 home
             </button>    -->
             &larr; home
         </a>
     </div>
-    <script src="javascript/recap.js"></script>
-    <script src="javascript/logout.js"></script>
+    <script type="module" src="./javascript/recap.js"></script>
+    <script type="module" src="./javascript/logout.js"></script>
 </body>
 </html>
