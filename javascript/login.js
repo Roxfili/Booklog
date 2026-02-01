@@ -1,5 +1,5 @@
 import { sbAuth } from './auth_check.js';
-// 2. Selezione elementi
+
 const loginForm = document.querySelector('.login-form');
 const toggleLink = document.getElementById('toggle-link');
 const toggleText = document.getElementById('toggle-text');
@@ -9,14 +9,13 @@ const submitBtn = document.querySelector('.login-btn');
 
 let isLoginMode = true;
 
-// 3. Gestione del Toggle (Registrati / Accedi)
 if (toggleLink) {
     toggleLink.addEventListener('click', function(e) {
-        e.preventDefault(); // BLOCCA IL RICARICAMENTO
-        e.stopPropagation(); // BLOCCA ALTRI EVENTI
+        e.preventDefault(); 
+        e.stopPropagation(); 
         
         isLoginMode = !isLoginMode;
-        console.log("Modalità Login:", isLoginMode);
+        console.log("Login mode:", isLoginMode);
 
         if (isLoginMode) {
             formTitle.innerText = "Welcome";
@@ -35,15 +34,14 @@ if (toggleLink) {
     });
 }
 
-// 4. Gestione Invio Form
 loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // BLOCCA IL RICARICAMENTO DEL FORM
+    e.preventDefault(); 
     
     const email = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
     submitBtn.disabled = true;
-    submitBtn.innerText = "Attendere...";
+    submitBtn.innerText = "Wait...";
 
     try {
         if (isLoginMode) {
@@ -54,15 +52,15 @@ loginForm.addEventListener('submit', async (e) => {
         } else {
             const { data, error } = await sbAuth.auth.signUp({ email, password });
             if (error) throw error;
-            alert("Registrazione effettuata! Controlla l'email.");
+            alert("Done, check email");
             if (data.user && data.session) {
                 window.location.href = 'home.html';
             }
         }
     } catch (err) {
-        alert("Errore: " + err.message);
+        alert("Error: " + err.message);
     } finally {
         submitBtn.disabled = false;
-        submitBtn.innerText = isLoginMode ? "Accedi" : "Crea Account";
+        submitBtn.innerText = isLoginMode ? "Login" : "Create Account";
     }
 });

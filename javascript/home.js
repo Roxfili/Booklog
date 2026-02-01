@@ -1,5 +1,88 @@
 import { sbAuth } from './auth_check.js';
-//--------INITIAL COUNTS----------
+import { renderStars, formatShortDate } from './utils.js';
+
+//----------- GLOBAL VARS -----------
+
+let currentNewBookId = null;
+let currentNewBookTitle = "";
+
+//---------- FUNCTIONS CALLS ------------
+
+updateDashboardCounts();
+updateLastRead();
+
+//---------- FUNCTIONS DEFS ------------
+
+async function updateTopThree(bookId, newRank) {
+    const year = new Date().getFullYear();
+
+    // if #1: old 1 -> 2, old 2 -> 3.
+    // if #2: old 2 -> 3.
+    
+    if (newRank === 1) {
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
+        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year);
+    } else if (newRank === 2) {
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
+    }
+
+    await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year); 
+    await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year);
+
+    const { error } = await sbAuth.from('Top_3_Year').insert([{ 
+        book_id: bookId, 
+        rank: newRank, 
+        year: year 
+    }]);
+
+    if (error) {
+        console.error("Errore inserimento Top 3:", error.message);
+        throw error;
+    }
+}
+
+async function handleMonthlyFavorite(bookId, stars, endDate) {
+    const date = new Date(endDate);
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const newStars = parseFloat(stars);
+
+    const { data: existingFav, error: favError } = await sbAuth.from('Monthly_Favourites')
+        .select(`id, book_id`)
+        .eq('month', month)
+        .eq('year', year)
+        .maybeSingle();
+
+    if (favError) console.error("Errore recupero favorito:", favError);
+
+    if (!existingFav) {
+        
+        await sbAuth.from('Monthly_Favourites').insert([{ book_id: bookId, month, year }]);
+    } else {
+        const { data: oldReadData } = await sbAuth.from('Read')
+            .select('stars, Books(title)')
+            .eq('book_id', existingFav.book_id)
+            .maybeSingle();
+
+        const oldStars = oldReadData ? parseFloat(oldReadData.stars) : 0;
+        const oldTitle = oldReadData?.Books?.title || "the current one";
+
+        console.log(`Confronto: Nuovo(${newStars}) vs Vecchio(${oldStars})`);
+
+        if (newStars > oldStars) {
+            
+            await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
+        } 
+        else if (newStars === oldStars && newStars > 0) {
+            
+            const chooseNew = confirm(`Tie! Both books have ${newStars} stars. \nDo you want to set "${currentNewBookTitle}" as the new Monthly Favorite instead of "${oldTitle}"?`);
+            if (chooseNew) {
+                await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
+            }
+        }
+    }
+}
+
 async function updateDashboardCounts() {
   try {
         
@@ -25,18 +108,14 @@ async function updateDashboardCounts() {
         if (readElem) readElem.innerText = readCount || 0;
 
     } catch (err) {
-      console.error("Errore conteggio:", err);
+      console.error("Error count:", err);
     }
 
   } catch (err) {
-      console.error("Errore conteggio:", err.message);
+      console.error("Errore count:", err.message);
   }
 
 }
-
-updateDashboardCounts();
-
-//-------- LAST READ ----------
 
 async function updateLastRead() {
   const lrTitle = document.getElementById("lr-title");
@@ -62,7 +141,7 @@ async function updateLastRead() {
           .maybeSingle();
 
   if (error) {
-    console.error("Errore nel recupero dell'ultimo libro:", error.message);
+    console.error("Error recovery last read book:", error.message);
   } else {
       lrTitle.innerText = data.Books.title || "Title";;
       lrAuthor.innerText = data.Books.author || "Author";
@@ -71,160 +150,27 @@ async function updateLastRead() {
       lrRates.innerHTML = renderStars(data.stars) || renderStars(0);
       lrCover.src = data.Books.cover_link || 'img/default_cover.jpg';
       lrCover.alt = "Book cover";
-      console.log("Widget Last Read aggiornato con successo!");
   }
 }
-
-updateLastRead()
-
-//-------- POPUP TBR ----------
-
-const sendBtnTbr = document.getElementById("send-tbr")
-const tbrPopBtn = document.getElementById("add-tbr-pop");
-const popupTbr = document.getElementById("popupTbr");
-const popupTbrForm =document.getElementById("popup-tbr-form");
-const category = document.getElementById("length");
-const subcategoryContainer = document.getElementById("subcategory-length");
-const subcategory = document.getElementById("length-sub");
-const judgyPop = document.getElementById("judgy-popup");
-const closeJudgyBtn = document.getElementById("close-judgy-popup");
-const closeTbrBtn = document.getElementById("close-tbr-popup");
-
-tbrPopBtn.addEventListener("click", () => {
-  popupTbr.style.display = "flex"; // display:flex per centrare contenuto
-  loadGenreSuggestions()
-  loadAuthorSuggestions()
-});
-
-closeTbrBtn.addEventListener("click", () => {
-  popupTbr.style.display = "none";
-});
-
-sendBtnTbr.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    // --- 1. Recupero dati con ID CORRETTI dall'HTML ---
-    const rawTitle = document.getElementById('tbr-title').value.trim(); // Corretto
-    const rawAuthor = document.getElementById('tbr-author').value.trim(); // Corretto
-    const link = document.getElementById('pu-link-value').value.trim();
-    const cover = document.getElementById('pu-cover-value').value.trim();
-    const genre = document.getElementById('pu-genre-genre').value.trim();
-    const tropes = document.getElementById('pu-trope-genre').value.trim();
-    const lengthType = document.getElementById('length').value; // 'serie' o 'standalone'
-
-    // --- 2. Logica Condizionale Status e Saga ---
-    let statusBool = true; // Default per standalone
-    let sagaName = null;
-    let seriePos = null;
-
-    if (lengthType === 'serie') {
-        const statusVal = document.getElementById('pu-length-sub').value;
-        statusBool = (statusVal === 'completed'); // true se 'completed', false altrimenti
-        
-        sagaName = document.getElementById('pu-saga-name').value.trim();
-        seriePos = document.getElementById('pu-prog-value').value;
-    }
-
-    if (!rawTitle || !rawAuthor) return alert("Title and Author are mandatory!");
-
-    // Formattazione (Prima lettera maiuscola)
-    const title = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1).toLowerCase();
-    const author = rawAuthor.charAt(0).toUpperCase() + rawAuthor.slice(1).toLowerCase();
-
-    try {
-        // --- STEP 1: Trova o Crea il Libro in "Books" ---
-        let { data: existingBook } = await sbAuth
-            .from('Books')
-            .select('ID')
-            .ilike('title', title) 
-            .ilike('author', author)
-            .maybeSingle();
-
-        let bookId;
-        if (existingBook) {
-            bookId = existingBook.ID;
-            // Opzionale: aggiorna lo status se è cambiato
-            await sbAuth.from('Books').update({ status: statusBool }).eq('ID', bookId);
-        } else {
-            const { data: newBook, error: bErr } = await sbAuth
-                .from('Books')
-                .insert([{ 
-                    title: title, 
-                    author: author, 
-                    genre: genre,
-                    tropes: tropes,
-                    length: lengthType, 
-                    saga: sagaName, 
-                    serie_position: seriePos, 
-                    cover_link: cover,
-                    status: statusBool // Salvataggio BOOLEARNO
-                }])
-                .select().single();
-            if (bErr) throw bErr;
-            bookId = newBook.ID;
-        }
-
-        // Controlla se quel libro ha già quel link specifico
-        const { data: sameLinkEntry } = await sbAuth
-            .from('TBR')
-            .select('ID')
-            .eq('book_id', bookId)
-            .eq('link', link)
-            .maybeSingle();
-
-        // Inserisci solo se non esiste già
-        if (!sameLinkEntry) {
-            await sbAuth.from('TBR').insert([{
-                book_id: bookId,
-                link: link,
-                add_date: new Date().toISOString().split('T')[0]
-            }]);
-            console.log("Nuovo link aggiunto alla TBR");
-        } else {
-            alert("Questo link è già presente per questo libro!");
-        }
-
-        // --- UI Feedback e Reset ---
-        const judgyMessage = document.getElementById('judgy-message-text');
-        judgyMessage.innerHTML = existingBook 
-            ? `You already added this book... READ IT! &#128520;` 
-            : `Wow, a new book... AS IF YOU NEEDED IT &#128529;`;
-
-        await updateDashboardCounts(); // Aggiorna i contatori in alto
-        
-        // Reset e chiusura
-        document.getElementById('popup-tbr-form').reset();
-        document.getElementById('subcategory-length').style.display = "none";
-        popupTbr.style.display = "none";
-        judgyPop.style.display = "flex";
-
-    } catch (err) {
-        console.error("Errore:", err.message);
-        alert("Errore nel salvataggio.");
-    }
-});
 
 async function loadGenreSuggestions() {
     const datalist = document.getElementById('genre-suggestions');
 
-    // Recuperiamo i generi unici dalla tabella Books
     const { data, error } = await sbAuth
         .from('Books')
-        .select('genre'); // Seleziona solo la colonna genre
+        .select('genre'); 
 
     if (error) {
-        console.error("Errore nel caricamento dei generi:", error.message);
+        console.error("Error loading:", error.message);
         return;
     }
 
     if (data) {
-        // Estraiamo i generi, puliamoli da spazi extra e rimuoviamo i duplicati
         const uniqueGenres = [...new Set(data
             .map(item => item.genre)
-            .filter(g => g) // Rimuove valori nulli
-        )].sort(); // Ordina alfabeticamente
+            .filter(g => g) 
+        )].sort(); 
 
-        // Puliamo il datalist e inseriamo le nuove opzioni
         datalist.innerHTML = uniqueGenres
             .map(genre => `<option value="${genre}">`)
             .join('');
@@ -239,7 +185,7 @@ async function loadAuthorSuggestions() {
         .select('author'); 
 
     if (error) {
-        console.error("Errore nel caricamento degli autori:", error.message);
+        console.error("Error loading:", error.message);
         return;
     }
 
@@ -256,6 +202,203 @@ async function loadAuthorSuggestions() {
             .join('');
     }
 }
+
+async function prepareTopThreePoll(newTitle) {
+    statForm.reset();
+    const year = new Date().getFullYear();
+
+    const { data: top3 } = await sbAuth.from('Top_3_Year')
+        .select('rank, Books(title)')
+        .eq('year', year)
+        .order('rank', { ascending: true });
+
+    const titles = {
+        1: top3.find(b => b.rank === 1)?.Books?.title,
+        2: top3.find(b => b.rank === 2)?.Books?.title,
+        3: top3.find(b => b.rank === 3)?.Books?.title
+    };
+
+    const count = top3.length;
+
+    document.getElementById('q1').style.display = "none";
+    document.getElementById('q2').style.display = "none";
+    document.getElementById('q3').style.display = "none";
+
+    // --- A: empty table ---
+    if (count === 0) {
+        //#1 automatically
+        document.getElementById('q1').style.display = "block";
+        document.getElementById('q1').querySelector('p').innerText = `You haven't added books to the Top 3 yet. Set "${newTitle}" as #1?`;
+        document.querySelector('input[name="q1"][value="yes"]').checked = true;
+    } 
+
+    // --- B: already 1 book (#1) ---
+    else if (count === 1) {
+        document.getElementById('q1').style.display = "block";
+        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[1]}" (#1)?`;
+    }
+
+    // --- C: already 2 books (#1 + #2) ---
+    else if (count === 2) {
+        document.getElementById('q1').style.display = "block";
+        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[2]}" (#2)?`;
+        
+        document.getElementsByName('q1').forEach(r => r.onchange = () => {
+            if (r.value === 'yes') {
+                document.getElementById('q2').style.display = "block";
+                document.getElementById('q2').querySelector('p').innerText = `Is it also better than "${titles[1]}" (#1)?`;
+            } else {
+                document.getElementById('q2').style.display = "none";
+            }
+        });
+    }
+
+    // --- D: full podium (3 books) ---
+    else {
+        document.getElementById('q1').style.display = "block";
+        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[3]}" (#3)?`;
+        
+        document.getElementsByName('q1').forEach(r => r.onchange = () => {
+            if (r.value === 'yes') {
+                document.getElementById('q2').style.display = "block";
+                document.getElementById('q2').querySelector('p').innerText = `Is it better than "${titles[2]}" (#2)?`;
+            } else {
+                document.getElementById('q2').style.display = "none";
+                document.getElementById('q3').style.display = "none";
+            }
+        });
+
+        document.getElementsByName('q2').forEach(r => r.onchange = () => {
+            if (r.value === 'yes') {
+                document.getElementById('q3').style.display = "block";
+                document.getElementById('q3').querySelector('p').innerText = `Is it even better than "${titles[1]}" (#1)?`;
+            } else {
+                document.getElementById('q3').style.display = "none";
+            }
+        });
+    }
+}
+
+//-------- POPUP TBR ----------
+
+const sendBtnTbr = document.getElementById("send-tbr")
+const tbrPopBtn = document.getElementById("add-tbr-pop");
+const popupTbr = document.getElementById("popupTbr");
+const category = document.getElementById("length");
+const subcategoryContainer = document.getElementById("subcategory-length");
+const subcategory = document.getElementById("length-sub");
+const judgyPop = document.getElementById("judgy-popup");
+const closeJudgyBtn = document.getElementById("close-judgy-popup");
+const closeTbrBtn = document.getElementById("close-tbr-popup");
+
+tbrPopBtn.addEventListener("click", () => {
+  popupTbr.style.display = "flex"; 
+  loadGenreSuggestions()
+  loadAuthorSuggestions()
+});
+
+closeTbrBtn.addEventListener("click", () => {
+  popupTbr.style.display = "none";
+});
+
+sendBtnTbr.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const rawTitle = document.getElementById('tbr-title').value.trim(); 
+    const rawAuthor = document.getElementById('tbr-author').value.trim(); 
+    const link = document.getElementById('pu-link-value').value.trim();
+    const cover = document.getElementById('pu-cover-value').value.trim();
+    const genre = document.getElementById('pu-genre-genre').value.trim();
+    const tropes = document.getElementById('pu-trope-genre').value.trim();
+    const lengthType = document.getElementById('length').value; // 'serie' or 'standalone'
+
+   
+    let statusBool = true; 
+    let sagaName = null;
+    let seriePos = null;
+
+    if (lengthType === 'serie') {
+        const statusVal = document.getElementById('pu-length-sub').value;
+        statusBool = (statusVal === 'completed'); // true if 'completed', false otherwise
+        
+        sagaName = document.getElementById('pu-saga-name').value.trim();
+        seriePos = document.getElementById('pu-prog-value').value;
+    }
+
+    if (!rawTitle || !rawAuthor) return alert("Title and Author are mandatory!");
+
+    const title = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1).toLowerCase();
+    const author = rawAuthor.charAt(0).toUpperCase() + rawAuthor.slice(1).toLowerCase();
+
+    try {
+        
+        let { data: existingBook } = await sbAuth
+            .from('Books')
+            .select('ID')
+            .ilike('title', title) 
+            .ilike('author', author)
+            .maybeSingle();
+
+        let bookId;
+        if (existingBook) {
+            bookId = existingBook.ID;
+            await sbAuth.from('Books').update({ status: statusBool }).eq('ID', bookId);
+        } else {
+            const { data: newBook, error: bErr } = await sbAuth
+                .from('Books')
+                .insert([{ 
+                    title: title, 
+                    author: author, 
+                    genre: genre,
+                    tropes: tropes,
+                    length: lengthType, 
+                    saga: sagaName, 
+                    serie_position: seriePos, 
+                    cover_link: cover,
+                    status: statusBool 
+                }])
+                .select().single();
+            if (bErr) throw bErr;
+            bookId = newBook.ID;
+        }
+
+        // Check if link already with that link
+        const { data: sameLinkEntry } = await sbAuth
+            .from('TBR')
+            .select('ID')
+            .eq('book_id', bookId)
+            .eq('link', link)
+            .maybeSingle();
+
+        // Insert only if not already there
+        if (!sameLinkEntry) {
+            await sbAuth.from('TBR').insert([{
+                book_id: bookId,
+                link: link,
+                add_date: new Date().toISOString().split('T')[0]
+            }]);
+        } else {
+            alert("This book with this link has already been added");
+        }
+
+        // UI Feedback e Reset 
+        const judgyMessage = document.getElementById('judgy-message-text');
+        judgyMessage.innerHTML = existingBook 
+            ? `You already added this book... READ IT! &#128520;` 
+            : `Wow, a new book... AS IF YOU NEEDED IT &#128529;`;
+
+        await updateDashboardCounts(); 
+
+        document.getElementById('popup-tbr-form').reset();
+        document.getElementById('subcategory-length').style.display = "none";
+        popupTbr.style.display = "none";
+        judgyPop.style.display = "flex";
+
+    } catch (err) {
+        console.error("Errorr:", err.message);
+        alert("Error in saving");
+    }
+});
 
 closeTbrBtn.addEventListener("click", () => {
   popupTbr.style.display = "none";
@@ -281,13 +424,13 @@ category.addEventListener("change", () => {
     if (value === "serie") {
         subcategoryContainer.style.display = "block";
         subcategory.innerHTML = `
-            <option value="">-- Seleziona --</option>
+            <option value="">-- Select --</option>
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
              `;
     } else {
         subcategoryContainer.style.display = "none";
-        subcategory.innerHTML = "<option value=''>-- Seleziona --</option>";
+        subcategory.innerHTML = "<option value=''>-- Select --</option>";
     }
 });
 
@@ -303,7 +446,7 @@ const sendBtnStat = document.getElementById("send-stats")
 const statForm = document.getElementById("cascade-form");
 
 readPopBtn.addEventListener("click", () => {
-  popupRead.style.display = "flex"; // display:flex per centrare contenuto
+  popupRead.style.display = "flex"; 
 });
 
 closeCurBtn.addEventListener("click", () => {
@@ -316,11 +459,6 @@ closeStatBtn.addEventListener("click", () => {
   statForm.reset();
 });
 
-
-// Variabili globali temporanee per passare dati tra i due popup
-let currentNewBookId = null;
-let currentNewBookTitle = "";
-
 sendBtnCur.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -329,7 +467,7 @@ sendBtnCur.addEventListener("click", async (e) => {
     const startDate = document.getElementById('pu-start-value').value;
     const endDate = document.getElementById('read-end').value;
     const starsValue = document.getElementById('read-rate').value;
-    const cover = document.getElementById('read-cover').value.trim(); // <--- NUOVO
+    const cover = document.getElementById('read-cover').value.trim(); 
 
     let stars = parseFloat(starsValue);
 
@@ -342,31 +480,31 @@ sendBtnCur.addEventListener("click", async (e) => {
 
         if (end < start) {
             alert("Error: The finish date cannot be earlier than the start date!");
-            return; // Blocca l'invio
+            return; 
         }
     }
 
     if (!title || !author || !endDate) return alert("Missing data!");
 
     try {
-        // 1. Cerca libro
+        
         let { data: book } = await sbAuth.from('Books')
             .select('ID, cover_link').ilike('title', title).ilike('author', author).maybeSingle();
         
         let bookId;
         if (!book) {
-            // Se non esiste, lo creiamo con la cover
+            
             const { data: newB } = await sbAuth.from('Books')
                 .insert([{ title, author, cover_link: cover }]).select().single();
             bookId = newB.ID;
         } else {
             bookId = book.ID;
-            // OPZIONALE: Se il libro esiste ma non ha la cover, la aggiorniamo
+            
             if (!book.cover_link && cover) {
                 await sbAuth.from('Books').update({ cover_link: cover }).eq('ID', bookId);
             }
         }
-        // 2. Prova a cancellarlo dalla TBR (se c'è)
+        
         const { data: tbrCheck } = await sbAuth.from('TBR')
             .delete()
             .eq('book_id', bookId)
@@ -374,7 +512,7 @@ sendBtnCur.addEventListener("click", async (e) => {
         
         const isFromTbr = tbrCheck && tbrCheck.length > 0;
 
-        // 3. Inserisci nella tabella "Read"
+        
         const { error: readErr } = await sbAuth.from('Read').insert([{
             book_id: bookId,
             start_date: startDate || null,
@@ -384,20 +522,16 @@ sendBtnCur.addEventListener("click", async (e) => {
         }]);
         if (readErr) throw readErr;
 
-        // Salva dati per il popup successivo
         currentNewBookId = bookId;
         currentNewBookTitle = title;
 
-        // 4. Gestione Favorito del Mese
         await handleMonthlyFavorite(bookId, stars, endDate);
 
-        // 5. Passaggio al Popup Classifica
         await updateDashboardCounts();
         await updateLastRead()
         popupRead.style.display = "none";
         popupCrForm.reset();
         
-        // Prepariamo le domande dinamiche per la Top 3
         await prepareTopThreePoll(title);
         popupStat.style.display = "flex";
 
@@ -415,7 +549,6 @@ sendBtnStat.addEventListener("click", async (e) => {
     const r2 = document.querySelector('input[name="q2"]:checked')?.value;
     const r3 = document.querySelector('input[name="q3"]:checked')?.value;
 
-    // Recuperiamo il conteggio attuale per decidere il rank
     const year = new Date().getFullYear();
     const { data: top3 } = await sbAuth.from('Top_3_Year').select('rank').eq('year', year);
     const count = top3.length;
@@ -450,164 +583,6 @@ sendBtnStat.addEventListener("click", async (e) => {
 
     popupStat.style.display = "none";
 });
-
-async function prepareTopThreePoll(newTitle) {
-    statForm.reset();
-    const year = new Date().getFullYear();
-
-    // 1. Recuperiamo i libri attualmente in Top 3
-    const { data: top3 } = await sbAuth.from('Top_3_Year')
-        .select('rank, Books(title)')
-        .eq('year', year)
-        .order('rank', { ascending: true });
-
-    const titles = {
-        1: top3.find(b => b.rank === 1)?.Books?.title,
-        2: top3.find(b => b.rank === 2)?.Books?.title,
-        3: top3.find(b => b.rank === 3)?.Books?.title
-    };
-
-    const count = top3.length;
-
-    // Reset visibilità
-    document.getElementById('q1').style.display = "none";
-    document.getElementById('q2').style.display = "none";
-    document.getElementById('q3').style.display = "none";
-
-    // --- CASO A: Tabella Vuota ---
-    if (count === 0) {
-        // Diventa #1 automaticamente (mostriamo un messaggio o una domanda pro-forma)
-        document.getElementById('q1').style.display = "block";
-        document.getElementById('q1').querySelector('p').innerText = `You haven't added books to the Top 3 yet. Set "${newTitle}" as #1?`;
-        // Pre-selezioniamo "yes" per comodità
-        document.querySelector('input[name="q1"][value="yes"]').checked = true;
-    } 
-
-    // --- CASO B: C'è 1 libro (#1) ---
-    else if (count === 1) {
-        document.getElementById('q1').style.display = "block";
-        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[1]}" (#1)?`;
-    }
-
-    // --- CASO C: Ci sono 2 libri (#1 e #2) ---
-    else if (count === 2) {
-        document.getElementById('q1').style.display = "block";
-        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[2]}" (#2)?`;
-        
-        document.getElementsByName('q1').forEach(r => r.onchange = () => {
-            if (r.value === 'yes') {
-                document.getElementById('q2').style.display = "block";
-                document.getElementById('q2').querySelector('p').innerText = `Is it also better than "${titles[1]}" (#1)?`;
-            } else {
-                document.getElementById('q2').style.display = "none";
-            }
-        });
-    }
-
-    // --- CASO D: Classifica Piena (3 libri) ---
-    else {
-        document.getElementById('q1').style.display = "block";
-        document.getElementById('q1').querySelector('p').innerText = `Is "${newTitle}" better than "${titles[3]}" (#3)?`;
-        
-        document.getElementsByName('q1').forEach(r => r.onchange = () => {
-            if (r.value === 'yes') {
-                document.getElementById('q2').style.display = "block";
-                document.getElementById('q2').querySelector('p').innerText = `Is it better than "${titles[2]}" (#2)?`;
-            } else {
-                document.getElementById('q2').style.display = "none";
-                document.getElementById('q3').style.display = "none";
-            }
-        });
-
-        document.getElementsByName('q2').forEach(r => r.onchange = () => {
-            if (r.value === 'yes') {
-                document.getElementById('q3').style.display = "block";
-                document.getElementById('q3').querySelector('p').innerText = `Is it even better than "${titles[1]}" (#1)?`;
-            } else {
-                document.getElementById('q3').style.display = "none";
-            }
-        });
-    }
-}
-
-async function updateTopThree(bookId, newRank) {
-    const year = new Date().getFullYear();
-
-    // 1. Prima facciamo spazio: chi è nel posto che vogliamo prendere (o sotto) deve scalare
-    // Se entri al #1: il vecchio 1 va al 2, il vecchio 2 va al 3.
-    // Se entri al #2: il vecchio 2 va al 3.
-    
-    if (newRank === 1) {
-        // Spostiamo in ordine inverso (dal 2 al 3, poi dall'1 al 2) per non sovrascrivere
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
-        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year);
-    } else if (newRank === 2) {
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year);
-    }
-
-    // 2. Pulizia: 
-    // - Eliminiamo il vecchio rank 3 se qualcuno è scalato lì sopra (perché ora sarebbe un rank 4 o un doppione)
-    // - Eliminiamo chiunque occupi il newRank per sicurezza prima dell'insert
-    await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year); 
-    await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year);
-
-    // 3. Inseriamo il nuovo re della classifica
-    const { error } = await sbAuth.from('Top_3_Year').insert([{ 
-        book_id: bookId, 
-        rank: newRank, 
-        year: year 
-    }]);
-
-    if (error) {
-        console.error("Errore inserimento Top 3:", error.message);
-        throw error;
-    }
-}
-
-async function handleMonthlyFavorite(bookId, stars, endDate) {
-    const date = new Date(endDate);
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const newStars = parseFloat(stars);
-
-    // 1. Troviamo il favorito attuale per quel mese
-    const { data: existingFav, error: favError } = await sbAuth.from('Monthly_Favourites')
-        .select(`id, book_id`)
-        .eq('month', month)
-        .eq('year', year)
-        .maybeSingle();
-
-    if (favError) console.error("Errore recupero favorito:", favError);
-
-    if (!existingFav) {
-        // Nessun favorito? Inseriamo il primo
-        await sbAuth.from('Monthly_Favourites').insert([{ book_id: bookId, month, year }]);
-    } else {
-        // 2. Se esiste, dobbiamo recuperare le stelle del vecchio favorito dalla tabella "Read"
-        const { data: oldReadData } = await sbAuth.from('Read')
-            .select('stars, Books(title)')
-            .eq('book_id', existingFav.book_id)
-            .maybeSingle();
-
-        const oldStars = oldReadData ? parseFloat(oldReadData.stars) : 0;
-        const oldTitle = oldReadData?.Books?.title || "the current one";
-
-        console.log(`Confronto: Nuovo(${newStars}) vs Vecchio(${oldStars})`);
-
-        if (newStars > oldStars) {
-            // Sostituzione automatica se il voto è più alto
-            await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
-        } 
-        else if (newStars === oldStars && newStars > 0) {
-            // PAREGGIO: Qui DEVE scattare il confirm
-            const chooseNew = confirm(`Tie! Both books have ${newStars} stars. \nDo you want to set "${currentNewBookTitle}" as the new Monthly Favorite instead of "${oldTitle}"?`);
-            if (chooseNew) {
-                await sbAuth.from('Monthly_Favourites').update({ book_id: bookId }).eq('id', existingFav.id);
-            }
-        }
-    }
-}
-
 //--------POPUP BUY----------
 
 const popupBuy = document.getElementById("popupBuy");
@@ -618,7 +593,7 @@ const buyForm = document.getElementById("popup-buy-form");
 
 
 openBuyBtn.addEventListener("click", () => {
-  popupBuy.style.display = "flex"; // display:flex per centrare contenuto
+  popupBuy.style.display = "flex"; 
 });
 
 closeBuyBtn.addEventListener("click", () => {
@@ -668,38 +643,14 @@ sendBuyBtn.addEventListener("click", async(e) => {
             }]);
         if (purchaseError) throw purchaseError;
 
-        alert("Acquisto registrato con successo!");
+        alert("Success");
 
     } catch (err) {
-        console.error("Errore:", err.message);
-        alert("Ops! Qualcosa è andato storto nel salvataggio.");
+        console.error("Error:", err.message);
+        alert("Ops! Something went wrong");
     }
   popupBuy.style.display = "none";
   buyForm.reset();
 });
 
-//-------- UTILS ----------
-
-function renderStars(rating) {
-    let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-        if (rating >= i) {
-            // Stella Piena
-            starsHTML += '<i class="fas fa-star"></i>';
-        } else if (rating >= i - 0.5) {
-            // Mezza Stella
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        } else {
-            // Stella Vuota (solo contorno)
-            starsHTML += '<i class="far fa-star"></i>';
-        }
-    }
-    return starsHTML;
-}
-
-function formatShortDate(dateStr) {
-    if (!dateStr) return null;
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}`;
-}
 //BooksReadTbr2026

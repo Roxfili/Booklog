@@ -1,34 +1,11 @@
 import { sbAuth } from './auth_check.js';
+import { renderStars, formatDate, formatShortDate } from './utils.js';
+
 //TBR PAGE
-//tbr options script
-const loadBtn = document.querySelector('.tbr-confirm');
-const randomBtn = document.getElementById('choose-random');
-const tbrContainer = document.querySelector('.tbr-list-container');
-
-// Variabile globale per salvare i libri caricati (serve per il tasto Random)
+//----------- GLOBAL VARS -----------
 let currentTbrList = [];
-
-// Riferimenti per la logica dei menu
-const categorySelect = document.getElementById("length");
-const subcategoryContainer = document.getElementById("subcategory-length");
-const subcategorySelect = document.getElementById("length-sub");
-
-// Mostra/Nascondi status se è una serie
-categorySelect.addEventListener("change", () => {
-    const value = categorySelect.value;
-    if (value === "serie") {
-        subcategoryContainer.style.display = "block";
-        subcategorySelect.innerHTML = `
-            <option value="">-- Select Status --</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-        `;
-    } else {
-        subcategoryContainer.style.display = "none";
-        subcategorySelect.innerHTML = "<option value=''>-- Select --</option>";
-    }
-});
-
+//----------- FUNCS CALLS -----------
+//----------- FUNCS DEFS -----------
 async function loadTBR() {
     
     const lengthFilter = document.getElementById('length').value;
@@ -79,29 +56,25 @@ async function loadTBR() {
         const { data, error } = await query;
         if (error) throw error;
 
-        // 1. RAGGRUPPAMENTO (creiamo la nostra lista unica)
         const groupedMap = data.reduce((acc, item) => {
             const title = item.Books.title;
             if (!acc[title]) {
                 acc[title] = {
                     ...item.Books,
                     links: [item.link],
-                    total_count: 1 // Ogni riga trovata conta come 1
+                    total_count: 1 
                 };
             } else {
                 if (item.link && !acc[title].links.includes(item.link)) {
                     acc[title].links.push(item.link);
                 }
-                acc[title].total_count += 1; // Incrementiamo il conteggio
+                acc[title].total_count += 1; 
             }
             return acc;
         }, {});
 
-        // 2. TRASFORMAZIONE IN ARRAY
         let groupedData = Object.values(groupedMap);
 
-        // 3. ORDINAMENTO (Qui avviene la magia!)
-        // Ordiniamo l'array in base al total_count che abbiamo appena calcolato
         groupedData.sort((a, b) => b.total_count - a.total_count);
 
         currentTbrList = groupedData;
@@ -121,28 +94,23 @@ function updateTBRFilters(books) {
     const genreSelect = document.getElementById('genre');
     const tropesSelect = document.getElementById('tropes');
 
-    // 1. Estraiamo i valori unici dai dati dei libri
-    // Per Genre e Length prendiamo il valore così com'è
     const genres = [...new Set(books.map(b => b.genre))].filter(Boolean).sort();
     const lengths = [...new Set(books.map(b => b.length))].filter(Boolean).sort();
-    
-    // 2. Per le Tropes: dividiamo per '-', puliamo gli spazi e appiattiamo
+
     const tropes = [...new Set(
         books.flatMap(b => b.tropes ? b.tropes.split('-').map(t => t.trim()) : [])
     )].filter(Boolean).sort();
 
-    // 3. Funzione per svuotare e riempire le select
     const renderOptions = (selectElement, options, placeholder) => {
         if (!selectElement) return;
-        const currentValue = selectElement.value; // Conserva cosa avevi selezionato
+        const currentValue = selectElement.value; 
         
         selectElement.innerHTML = `<option value="">${placeholder}</option>` + 
             options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
         
-        selectElement.value = currentValue; // Evita che si resetti mentre lo usi
+        selectElement.value = currentValue; 
     };
-
-    // 4. Eseguiamo il riempimento
+    
     renderOptions(lengthSelect, lengths, "-- Select --");
     renderOptions(genreSelect, genres, "-- Select --");
     renderOptions(tropesSelect, tropes, "-- Select --");
@@ -173,7 +141,7 @@ function renderTable(groupedBooks) {
     `;
 
     groupedBooks.forEach(book => {
-        // Creiamo la lista di icone per ogni link presente nell'array 'links'
+        
         const linksHTML = book.links
             .map(link => `<a href="${link}" target="_blank" style="margin-right: 5px;">🔗</a>`)
             .join("");
@@ -195,7 +163,32 @@ function renderTable(groupedBooks) {
     tbrContainer.innerHTML = html;
 }
 
-// --- Funzione Random ---
+//----------- ELEMENTS -----------
+
+const loadBtn = document.querySelector('.tbr-confirm');
+const randomBtn = document.getElementById('choose-random');
+const tbrContainer = document.querySelector('.tbr-list-container');
+
+const categorySelect = document.getElementById("length");
+const subcategoryContainer = document.getElementById("subcategory-length");
+const subcategorySelect = document.getElementById("length-sub");
+
+categorySelect.addEventListener("change", () => {
+    const value = categorySelect.value;
+    if (value === "serie") {
+        subcategoryContainer.style.display = "block";
+        subcategorySelect.innerHTML = `
+            <option value="">-- Select Status --</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+        `;
+    } else {
+        subcategoryContainer.style.display = "none";
+        subcategorySelect.innerHTML = "<option value=''>-- Select --</option>";
+    }
+});
+
+
 randomBtn.addEventListener('click', () => {
     const rows = document.querySelectorAll('.tbr-table tbody tr');
     
@@ -230,7 +223,6 @@ randomBtn.addEventListener('click', () => {
             
             winner.classList.add('winner-row');
 
-            // --- SCROLL SOLO PER IL VINCITORE ---
             winner.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             randomBtn.disabled = false;
@@ -243,17 +235,17 @@ randomBtn.addEventListener('click', () => {
         }
     }, speed);
 });
-// Event Listener per il tasto Load
+
 loadBtn.addEventListener('click', () => {
-    // Rimuove visivamente la classe dalla riga prima ancora di ricaricare i dati
+    
     const winner = document.querySelector('.winner-row');
     if (winner) winner.classList.remove('winner-row');
     
     loadTBR();
 });
 
-// // Carica tutto all'avvio
 document.addEventListener('DOMContentLoaded', loadTBR);
+
 categorySelect.addEventListener("change", () => {
   const value = categorySelect.value;
 

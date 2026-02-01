@@ -5,16 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            console.log("Tentativo di logout...");
-
+        
             const { error } = await sbAuth.auth.signOut();
 
             if (error) {
-                console.error("Errore durante il logout:", error.message);
-                alert("Errore: " + error.message);
+                console.error("Error logout:", error.message);
+                alert("Error: " + error.message);
             } else {
-                console.log("Logout effettuato con successo!");
+                console.log("Logout successfull");
                 
                 localStorage.clear();
                 

@@ -1,5 +1,14 @@
 import { sbAuth } from './auth_check.js';
+import { renderStars, formatShortDate } from './utils.js';
+
+//----------- FUNCS CALLS -----------
+
+updateBubbleCounts();
+updatePodium();
+updateMonthFav();
+
 //----------- RECAP BUBBLES -----------
+
 async function updateBubbleCounts() {
     try {
         
@@ -58,8 +67,6 @@ async function updateBubbleCounts() {
 
 }
 
-updateBubbleCounts();
-
 //----------- PODIUM -----------
 
 async function updatePodium() {
@@ -84,15 +91,13 @@ async function updatePodium() {
 
         for (let i = 0; i < 3; i++) {
             const book = podiumBooks[i];
-            const n = i + 1; // Per selezionare gli ID 1, 2, 3
+            const n = i + 1; 
 
-            // Se il libro esiste per questa posizione
             if (book) {
                 document.getElementById(`podium-image${n}`).src = book.cover_link || 'placeholder.jpg';
                 document.getElementById(`podium-title${n}`).textContent = book.title;
                 document.getElementById(`podium-author${n}`).textContent = book.author;
                 
-                // Gestione Date (ricorda: Read è un array!)
                 const readData = book.Read[0]; 
                 let dateText = "Non letta";
                 if (readData) {
@@ -102,10 +107,8 @@ async function updatePodium() {
                 }
                 document.getElementById(`podium-dates${n}`).textContent = dateText;
 
-                // Stelle (usa innerHTML se renderStars restituisce tag <span> o icone)
                 document.getElementById(`podium-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
             } else {
-                // Opzionale: cosa mostrare se la posizione è vuota
                 document.getElementById(`podium-title${n}`).textContent = "TBD";
                 document.getElementById(`podium-image${n}`).src = 'img/dragon.png';
                 document.getElementById(`podium-author${n}`).textContent = "Author";
@@ -119,8 +122,6 @@ async function updatePodium() {
     }
 
 }
-
-updatePodium();
 
 //-------- MONTHLY FAVES ----------
 
@@ -147,12 +148,10 @@ async function updateMonthFav() {
             const book = monthBooks[i];
             const n = i + 1; 
 
-            // Se il libro esiste per questo mese
             if (book) {
                 document.getElementById(`fav-img${n}`).src = book.cover_link || 'img/dragon.png';
                 document.getElementById(`fav-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
             } else {
-                // Opzionale: cosa mostrare se la posizione è vuota
                 document.getElementById(`fav-img${n}`).src = 'img/dragon.png';
                 document.getElementById(`fav-rate${n}`).innerHTML = renderStars(0);
             
@@ -163,32 +162,5 @@ async function updateMonthFav() {
     }
 
 
-}
-
-updateMonthFav();
-
-//-------- UTILS ----------
-
-function renderStars(rating) {
-    let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-        if (rating >= i) {
-            // Stella Piena
-            starsHTML += '<i class="fas fa-star"></i>';
-        } else if (rating >= i - 0.5) {
-            // Mezza Stella
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        } else {
-            // Stella Vuota (solo contorno)
-            starsHTML += '<i class="far fa-star"></i>';
-        }
-    }
-    return starsHTML;
-}
-
-function formatShortDate(dateStr) {
-    if (!dateStr) return null;
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}`;
 }
 
