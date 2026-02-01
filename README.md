@@ -16,87 +16,86 @@ I'm very very lazy and so i add thousands of reels on instagram folders names 'r
 * **Google Fonts:** Using editorial fonts.
 
 ## DB config
-> **Note:** To set up the database, run the following SQL script in your Supabase SQL Editor. It will create the necessary tables and relationships.
+> **Note:** To set up the database, use the following SQL script as a base. 
+> -- WARNING: This schema is for context only and is not meant to be run.
+> -- Table order and constraints may not be valid for execution.
 
-create table public."Books" (
-  title character varying not null,
-  author character varying not null,
-  length character varying null,
-  saga character varying null,
-  serie_position smallint null,
-  status boolean null,
-  cover_link character varying null,
-  "ID" uuid not null default gen_random_uuid (),
-  genre character varying null,
-  tropes text null,
-  constraint Books_pkey primary key ("ID")
-) TABLESPACE pg_default;
-
-create table public."Monthly_Favourites" (
-  id uuid not null default gen_random_uuid (),
-  user_id uuid not null default auth.uid (),
-  book_id uuid null default gen_random_uuid (),
-  month integer not null,
-  year bigint not null,
-  constraint Monthly_Favourites_pkey primary key (id),
-  constraint Monthly_Favourites_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
-  constraint Monthly_Favourites_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
-) TABLESPACE pg_default;
-
-create table public."Purchase" (
-  id uuid not null default gen_random_uuid (),
-  user_id uuid not null default auth.uid (),
-  book_id uuid null default gen_random_uuid (),
-  price real null,
-  shop_date date null,
-  title character varying null,
-  constraint Purchase_pkey primary key (id),
-  constraint Purchase_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
-  constraint Purchase_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE
-) TABLESPACE pg_default;
-
-create table public."Read" (
-  id uuid not null default gen_random_uuid (),
-  user_id uuid not null default auth.uid (),
-  book_id uuid null default gen_random_uuid (),
-  start_date date null,
-  finish_date date not null,
-  stars real null,
-  is_from_tbr boolean null default false,
-  constraint Read_pkey primary key (id),
-  constraint Read_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
-  constraint Read_bser_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE,
-  constraint date_check check ((start_date <= finish_date)),
-  constraint stars_range_check check (
-    (
-      (stars >= (0)::double precision)
-      and (stars <= (5)::double precision)
-    )
-  )
-) TABLESPACE pg_default;
-
-create table public."TBR" (
-  link character varying null,
-  add_date date null,
-  "ID" uuid not null default gen_random_uuid (),
-  user_id uuid not null default auth.uid (),
-  book_id uuid not null default gen_random_uuid (),
-  constraint TBR_pkey primary key ("ID"),
-  constraint TBR_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
-  constraint TBR_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE
-) TABLESPACE pg_default;
-
-create table public."Top_3_Year" (
-  id uuid not null default gen_random_uuid (),
-  user_id uuid not null default auth.uid (),
-  book_id uuid not null default gen_random_uuid (),
-  rank integer null,
-  year integer null,
-  constraint Top_3_Year_pkey primary key (id),
-  constraint Top_3_Year_book_id_key unique (book_id),
-  constraint Top_3_Year_book_id_fkey foreign KEY (book_id) references "Books" ("ID") on update CASCADE on delete CASCADE,
-  constraint Top_3_Year_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
-) TABLESPACE pg_default;
+CREATE TABLE public.Books (
+  title character varying NOT NULL,
+  author character varying NOT NULL,
+  length character varying,
+  saga character varying,
+  serie_position smallint,
+  status boolean,
+  cover_link character varying,
+  ID uuid NOT NULL DEFAULT gen_random_uuid(),
+  genre character varying,
+  tropes text,
+  saga_total_books smallint,
+  user_id uuid DEFAULT auth.uid(),
+  CONSTRAINT Books_pkey PRIMARY KEY (ID),
+  CONSTRAINT Books_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.Monthly_Favourites (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL DEFAULT auth.uid(),
+  book_id uuid DEFAULT gen_random_uuid(),
+  month integer NOT NULL,
+  year bigint NOT NULL,
+  CONSTRAINT Monthly_Favourites_pkey PRIMARY KEY (id),
+  CONSTRAINT Monthly_Favourites_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
+  CONSTRAINT Monthly_Favourites_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.Profiles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  username text NOT NULL UNIQUE,
+  email text NOT NULL UNIQUE,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT Profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT Profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.Purchase (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL DEFAULT auth.uid(),
+  book_id uuid DEFAULT gen_random_uuid(),
+  price real,
+  shop_date date,
+  CONSTRAINT Purchase_pkey PRIMARY KEY (id),
+  CONSTRAINT Purchase_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
+  CONSTRAINT Purchase_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.Read (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL DEFAULT auth.uid(),
+  book_id uuid DEFAULT gen_random_uuid(),
+  start_date date,
+  finish_date date NOT NULL,
+  stars real CHECK (stars >= 0::double precision AND stars <= 5::double precision),
+  is_from_tbr boolean DEFAULT false,
+  CONSTRAINT Read_pkey PRIMARY KEY (id),
+  CONSTRAINT Read_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
+  CONSTRAINT Read_bser_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.TBR (
+  link character varying,
+  add_date date,
+  ID uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL DEFAULT auth.uid(),
+  book_id uuid NOT NULL DEFAULT gen_random_uuid(),
+  CONSTRAINT TBR_pkey PRIMARY KEY (ID),
+  CONSTRAINT TBR_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
+  CONSTRAINT TBR_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.Top_3_Year (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL DEFAULT auth.uid(),
+  book_id uuid NOT NULL DEFAULT gen_random_uuid() UNIQUE,
+  rank integer,
+  year integer,
+  CONSTRAINT Top_3_Year_pkey PRIMARY KEY (id),
+  CONSTRAINT Top_3_Year_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
+  CONSTRAINT Top_3_Year_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 
 ## How to install & run
 1. **Clone** the repo:  
