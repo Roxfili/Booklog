@@ -21,7 +21,7 @@ export function renderStars(rating) {
     return starsHTML;
 }
 
-function formatShortDate(dateStr) {
+export function formatShortDate(dateStr) {
     if (!dateStr) return null;
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}`;

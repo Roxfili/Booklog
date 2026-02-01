@@ -1,5 +1,4 @@
 import { sbAuth } from './auth_check.js';
-import { renderStars, formatDate, formatShortDate } from './utils.js';
 
 //TBR PAGE
 //----------- GLOBAL VARS -----------
