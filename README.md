@@ -16,26 +16,27 @@ I'm very very lazy and so i add thousands of reels on instagram folders names 'r
 * **Google Fonts:** Using editorial fonts.
 
 ## DB config
-> **Note:** To set up the database, use the following SQL script as a base. 
-> -- WARNING: This schema is for context only and is not meant to be run.
+> **Note:** To set up the database, use the following SQL script as a base.   
+> -- WARNING: This schema is for context only and is not meant to be run.  
 > -- Table order and constraints may not be valid for execution.
+```sql
+CREATE TABLE public.Books (  
+  title character varying NOT NULL,  
+  author character varying NOT NULL,  
+  length character varying,  
+  saga character varying,  
+  serie_position smallint,  
+  status boolean,  
+  cover_link character varying,  
+  ID uuid NOT NULL DEFAULT gen_random_uuid(),  
+  genre character varying,  
+  tropes text,  
+  saga_total_books smallint,  
+  user_id uuid DEFAULT auth.uid(),  
+  CONSTRAINT Books_pkey PRIMARY KEY (ID),  
+  CONSTRAINT Books_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)  
+);    
 
-CREATE TABLE public.Books (
-  title character varying NOT NULL,
-  author character varying NOT NULL,
-  length character varying,
-  saga character varying,
-  serie_position smallint,
-  status boolean,
-  cover_link character varying,
-  ID uuid NOT NULL DEFAULT gen_random_uuid(),
-  genre character varying,
-  tropes text,
-  saga_total_books smallint,
-  user_id uuid DEFAULT auth.uid(),
-  CONSTRAINT Books_pkey PRIMARY KEY (ID),
-  CONSTRAINT Books_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
 CREATE TABLE public.Monthly_Favourites (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL DEFAULT auth.uid(),
@@ -45,7 +46,8 @@ CREATE TABLE public.Monthly_Favourites (
   CONSTRAINT Monthly_Favourites_pkey PRIMARY KEY (id),
   CONSTRAINT Monthly_Favourites_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
   CONSTRAINT Monthly_Favourites_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
+);  
+
 CREATE TABLE public.Profiles (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   username text NOT NULL UNIQUE,
@@ -53,7 +55,8 @@ CREATE TABLE public.Profiles (
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT Profiles_pkey PRIMARY KEY (id),
   CONSTRAINT Profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
-);
+);  
+
 CREATE TABLE public.Purchase (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL DEFAULT auth.uid(),
@@ -63,7 +66,8 @@ CREATE TABLE public.Purchase (
   CONSTRAINT Purchase_pkey PRIMARY KEY (id),
   CONSTRAINT Purchase_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
   CONSTRAINT Purchase_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
+);  
+
 CREATE TABLE public.Read (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL DEFAULT auth.uid(),
@@ -75,7 +79,8 @@ CREATE TABLE public.Read (
   CONSTRAINT Read_pkey PRIMARY KEY (id),
   CONSTRAINT Read_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
   CONSTRAINT Read_bser_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
+);  
+
 CREATE TABLE public.TBR (
   link character varying,
   add_date date,
@@ -85,7 +90,8 @@ CREATE TABLE public.TBR (
   CONSTRAINT TBR_pkey PRIMARY KEY (ID),
   CONSTRAINT TBR_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
   CONSTRAINT TBR_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
+);  
+
 CREATE TABLE public.Top_3_Year (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL DEFAULT auth.uid(),
@@ -95,8 +101,8 @@ CREATE TABLE public.Top_3_Year (
   CONSTRAINT Top_3_Year_pkey PRIMARY KEY (id),
   CONSTRAINT Top_3_Year_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.Books(ID),
   CONSTRAINT Top_3_Year_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
-);
-
+);  
+```
 ## How to install & run
 1. **Clone** the repo:  
    `git clone https://github.com/Roxfili/booklog.git`
@@ -127,8 +133,11 @@ If it sucks, i'm sorry, i'm tired.
 
 ---
 <div sstyle="align:center">
-  <img src="screenshots/login.png" width="24%">
-  <img src="screenshots/register.png" width="24%">
-  <img src="screenshots/HomePage.png" width="24%">
-  <img src="screenshots/Recap.png" width="24%">
+  <img src="screenshots/login.png" width="25%">
+  <img src="screenshots/register.png" width="25%">
 </div>
+<div sstyle="align:center">
+  <img src="screenshots/HomePage.png" width="25%" height="360px">
+  <img src="screenshots/Recap.png" width="25%" height="360px">
+</div>
+
