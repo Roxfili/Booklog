@@ -1,4 +1,4 @@
-BookLog is my personal manual solution to turn chaotic saved videos and scattered links into an organized digital library. [Screenshots](#-gallery)
+BookLog is my personal manual solution to turn chaotic saved videos and scattered links into an organized digital library.  [(Screenshots)](#-gallery)
 
 ## The Problem
 I'm very very lazy and so i add thousands of reels on instagram folders names 'read later' or 'tbr' or 'want to read' and then completely forget about them. **BookLog** is my easy manual solution to finally give those links a home, transforming saved videos into an organized TBR list and have someone chosing the next book for me.
@@ -129,14 +129,20 @@ This project was born from a personal need to organize my "BookTok" chaos. It's 
 If it sucks, i'm sorry, i'm tired.
 
 ## Gallery
-<div sstyle="align:center">
-  <img src="screenshots/login.png" width="25%">
-  <img src="screenshots/register.png" width="25%">
+> Note: The data shown in the screenshots are placeholders used for UI testing purposes.
+<div style="align:center">
+  <img src="screenshots/login.png" width="24%">
+  <img src="screenshots/register.png" width="24%">
+  <img src="screenshots/BOOKS.png" width="24%">
+  <img src="screenshots/TBRList.png" width="24%">
 </div>
-<div sstyle="align:center">
-  <img src="screenshots/HomePage.png" width="25%" height="360px">
-  <img src="screenshots/Recap.png" width="25%" height="360px">
+<div style="align:center">
+  <img src="screenshots/HomePage.png" width="24%">
+  <img src="screenshots/Recap.png" width="24%" height="360px">
+  <img src="screenshots/addRead.png" width="24%">
+  <img src="screenshots/AddToTBR.png" width="24%">
 </div>
+
 
 ---
 **Made with insomnia by me <3**
