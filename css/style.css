@@ -765,8 +765,12 @@ img{
 .book-list-container {
     width: 90%;
     margin: 0 auto;
-    overflow-x: auto; 
-    padding-top: 20px;
+    margin-top: 20px;
+    height: 400px;
+    text-align: center;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    overflow: auto;
     
 }
 
