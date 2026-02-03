@@ -124,3 +124,11 @@ If it sucks, i'm sorry, i'm tired.
 
 ---
 **Made with insomnia by me <3**
+
+---
+<div sstyle="align:center">
+  <img src="screenshots/login.png" width="24%">
+  <img src="screenshots/register.png" width="24%">
+  <img src="screenshots/HomePage.png" width="24%">
+  <img src="screenshots/Recap.png" width="24%">
+</div>

@@ -94,7 +94,7 @@ export async function updatePodium() {
             const datesEl = document.getElementById(`podium-dates${n}`);
             const rateEl = document.getElementById(`podium-rate${n}`);
             if (book) {
-                imgEl.src = book.cover_link || 'img/dragon.png';
+                imgEl.src = book.cover_link || 'img/caraval_cover.jpg';
                 titleEl.textContent = book.title;
                 authorEl.textContent = book.author;
                 const readData = book.Read.find(r => r.user_id === user.id) || book.Read[0];
@@ -106,7 +106,7 @@ export async function updatePodium() {
                 }
             } else {
                 titleEl.textContent = "TBD";
-                imgEl.src = 'img/dragon.png';
+                imgEl.src = 'img/caraval_cover.jpg';
                 authorEl.textContent = "Author";
                 datesEl.textContent = "Date";
                 rateEl.innerHTML = renderStars(0);
@@ -159,10 +159,10 @@ export async function updateMonthFav() {
             const n = i + 1; 
 
             if (book) {
-                document.getElementById(`fav-img${n}`).src = book.cover_link || 'img/dragon.png';
+                document.getElementById(`fav-img${n}`).src = book.cover_link || 'img/caraval_cover.jpg';
                 document.getElementById(`fav-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
             } else {
-                document.getElementById(`fav-img${n}`).src = 'img/dragon.png';
+                document.getElementById(`fav-img${n}`).src = 'img/caraval_cover.jpg';
                 document.getElementById(`fav-rate${n}`).innerHTML = renderStars(0);
             
             }
