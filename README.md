@@ -1,4 +1,4 @@
-BookLog is my personal manual solution to turn chaotic saved videos and scattered links into an organized digital library. 
+BookLog is my personal manual solution to turn chaotic saved videos and scattered links into an organized digital library. [Screenshots](#-gallery)
 
 ## The Problem
 I'm very very lazy and so i add thousands of reels on instagram folders names 'read later' or 'tbr' or 'want to read' and then completely forget about them. **BookLog** is my easy manual solution to finally give those links a home, transforming saved videos into an organized TBR list and have someone chosing the next book for me.
@@ -128,10 +128,7 @@ I'm constantly working to make BookLog more intuitive. Planned updates include:
 This project was born from a personal need to organize my "BookTok" chaos. It's a work-in-progress journey into modern web development, focusing on clean UI and efficient database management.
 If it sucks, i'm sorry, i'm tired.
 
----
-**Made with insomnia by me <3**
-
----
+## Gallery
 <div sstyle="align:center">
   <img src="screenshots/login.png" width="25%">
   <img src="screenshots/register.png" width="25%">
@@ -140,4 +137,7 @@ If it sucks, i'm sorry, i'm tired.
   <img src="screenshots/HomePage.png" width="25%" height="360px">
   <img src="screenshots/Recap.png" width="25%" height="360px">
 </div>
+
+---
+**Made with insomnia by me <3**
 
