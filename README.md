@@ -113,8 +113,8 @@ CREATE TABLE public.Top_3_Year (
    ```text
    VITE_SUPABASE_URL=your_supabase_url_here
    VITE_SUPABASE_KEY=your_supabase_anon_key_here
-4. **Run the app**:
-    Start the development server: npx vite
+4. **Run the app**:  
+    Start the development server: npx vite  
     Open the link provided in the terminal (usually http://localhost:5173)
 
 ## Future Features
