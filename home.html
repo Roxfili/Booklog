@@ -122,7 +122,9 @@
                         <p>(title and author required)</p>
                         <form id="popup-tbr-form">
                             <label for="tbr-title"><u>Title:</u></label>
-                            <input type="text" id="tbr-title" placeholder="Caraval" required> <br>
+                            <input type="text" id="tbr-title" placeholder="Caraval" required list="title-suggestions"> <br>
+                            <datalist id="title-suggestions">
+                            </datalist>
                             <label for="tbr-author"><u>Author:</u></label>
                             <input type="text" id="tbr-author" placeholder="Stephanie Garber" required list="author-suggestions"> <br>
                             <datalist id="author-suggestions">

@@ -185,6 +185,33 @@ async function loadGenreSuggestions() {
     }
 }
 
+async function loadTitleSuggestions(){
+    const datalist = document.getElementById('title-suggestions');
+
+    const { data, error } = await sbAuth
+        .from('Books')
+        .select('title')
+        .eq('user_id', user.id); 
+
+    if (error) {
+        console.error("Error loading:", error.message);
+        return;
+    }
+
+    if (data) {
+        
+        const uniqueTitle = [...new Set(data
+            .map(item => item.title)
+            .filter(g => g) 
+        )].sort(); 
+
+        
+        datalist.innerHTML = uniqueTitle
+            .map(title => `<option value="${title}">`)
+            .join('');
+    }
+}
+
 async function loadAuthorSuggestions() {
     const datalist = document.getElementById('author-suggestions');
 
@@ -300,11 +327,48 @@ const subcategory = document.getElementById("length-sub");
 const judgyPop = document.getElementById("judgy-popup");
 const closeJudgyBtn = document.getElementById("close-judgy-popup");
 const closeTbrBtn = document.getElementById("close-tbr-popup");
+const tbrTitleInput = document.getElementById('tbr-title');
+
+tbrTitleInput.addEventListener('input', async (e) => {
+    const titleVal = e.target.value.trim();
+    
+    if (titleVal.length < 2) return; 
+
+    const { data: book, error } = await sbAuth
+        .from('Books')
+        .select('*')
+        .eq('user_id', user.id)
+        .ilike('title', titleVal) // Case insensitive
+        .maybeSingle();
+
+    if (book) {
+        //auto fill fields
+        document.getElementById('tbr-author').value = book.author || "";
+        document.getElementById('pu-cover-value').value = book.cover_link || "";
+        document.getElementById('pu-genre-genre').value = book.genre || "";
+        document.getElementById('pu-trope-genre').value = book.tropes || "";
+        
+        const lengthSelect = document.getElementById('length');
+        lengthSelect.value = book.length || "";
+        
+        const subcat = document.getElementById('subcategory-length');
+        if (book.length === 'serie') {
+            subcat.style.display = "block";
+            document.getElementById('pu-saga-name').value = book.saga || "";
+            document.getElementById('pu-prog-value').value = book.serie_position || "";
+            document.getElementById('pu-length-value').value = book.saga_total_books || "";
+            document.getElementById('pu-length-sub').value = book.status ? "completed" : "in-progress";
+        } else {
+            subcat.style.display = "none";
+        }
+    }
+});
 
 tbrPopBtn.addEventListener("click", () => {
   popupTbr.style.display = "flex"; 
-  loadGenreSuggestions()
-  loadAuthorSuggestions()
+  loadGenreSuggestions();
+  loadAuthorSuggestions();
+  loadTitleSuggestions();
 });
 
 closeTbrBtn.addEventListener("click", () => {
@@ -321,17 +385,19 @@ sendBtnTbr.addEventListener("click", async (e) => {
     const genre = document.getElementById('pu-genre-genre').value.trim();
     const tropes = document.getElementById('pu-trope-genre').value.trim();
     const lengthType = document.getElementById('length').value; // 'serie' or 'standalone'
-    const length = document.getElementById('pu-length-value').value.trim();
+
 
    
     let statusBool = true; 
     let sagaName = null;
     let seriePos = null;
+    let sagaLength = null;
 
     if (lengthType === 'serie') {
         const statusVal = document.getElementById('pu-length-sub').value;
         statusBool = (statusVal === 'completed'); // true if 'completed', false otherwise
         
+        sagaLength = document.getElementById('pu-length-value').value.trim();
         sagaName = document.getElementById('pu-saga-name').value.trim();
         seriePos = document.getElementById('pu-prog-value').value;
     }

@@ -632,7 +632,6 @@ img{
     text-align: center;
     background-color: whitesmoke;
     border-radius: 10px;
-    padding: 20px 20px;
     overflow: auto;
 }
 
@@ -658,6 +657,8 @@ img{
 .tbr-table tr:hover {
     background-color: #f9f9f9;
 }
+
+
 
 .winner-row {
     background-color: #ffeb3b !important; 
@@ -780,7 +781,7 @@ img{
     margin: 0 auto;
     background-color: #fff; 
     border-radius: 8px;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .books-table th, 
@@ -799,6 +800,8 @@ img{
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.9rem;
+    position: sticky;
+    top: 0;
 }
 
 .books-table img {
