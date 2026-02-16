@@ -196,6 +196,37 @@
                             <input type="text" id="read-cover" placeholder="https://image-url.com"> <br>
                             <label for="read-rate" >Rating:</label>
                             <input type="number" id="read-rate" placeholder="5" min="0" max="5" step="0.5"> <br>
+
+                            <label for="read-pu-genre-value" >Genre:</label>
+                            <input type="text" id="read-pu-genre-genre" placeholder="Fantasy" list="genre-suggestions"> <br>
+                            <datalist id="read-genre-suggestions">
+                            </datalist>
+                            <label for="read-pu-trope-value" >Tropes:</label>
+                            <input type="text" id="read-pu-trope-genre" placeholder="Dark Fantasy - Dark Romance - Just One Bed ..."> <br>
+                            <label for="read-length">Length:</label>
+                                <select id="read-length">
+                                    <option value="">-- Select --</option>
+                                    <option value="serie">Serie</option>
+                                    <option value="standalone">Standalone</option>
+                                </select>
+                                
+                            <!-- solo per saghe -->
+                                
+                            <div id="read-subcategory-length" style="display:none;">
+                                <label for="read-pu-saga-name">Saga Name:</label>
+                                <input type="text" id="read-pu-saga-name" placeholder="Caraval"> <br>
+                                <label for="read-pu-prog-value" >Position in saga:</label>
+                                <input type="number" id="read-pu-prog-value" placeholder="1"> <br>
+                                <label for="read-pu-length-value" >Books in saga:</label>
+                                <input type="number" id="read-pu-length-value" placeholder="4"> <br>
+                                <label for="read-pu-length-sub">Status:</label>
+                                <select id="read-pu-length-sub">
+                                    <option value="">-- Select --</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+
                         </form>
 
                         <button id="send-curRead" class="confirm-button">send</button>
