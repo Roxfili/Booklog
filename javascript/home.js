@@ -23,15 +23,15 @@ async function updateTopThree(bookId, newRank) {
         await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
         await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);
         await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year).eq('user_id', user.id);
-        //await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
         
     } else if (newRank === 2) {
         await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id); 
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);
+    } else if (newRank === 3) {
+        await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);
     }
 
-    //await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);
-    //await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year).eq('user_id', user.id);
+  
 
     const { error } = await sbAuth.from('Top_3_Year').insert([{ 
         book_id: bookId, 
@@ -327,7 +327,7 @@ const tbrPopBtn = document.getElementById("add-tbr-pop");
 const popupTbr = document.getElementById("popupTbr");
 const category = document.getElementById("length");
 const subcategoryContainer = document.getElementById("subcategory-length");
-const subcategory = document.getElementById("length-sub");
+const subcategory = document.getElementById("pu-length-sub");
 const judgyPop = document.getElementById("judgy-popup");
 const closeJudgyBtn = document.getElementById("close-judgy-popup");
 const closeTbrBtn = document.getElementById("close-tbr-popup");
@@ -534,6 +534,9 @@ const closeStatBtn = document.getElementById("close-stat-popup");
 const sendBtnStat = document.getElementById("send-stats")
 const statForm = document.getElementById("cascade-form");
 const readTitleInput = document.getElementById('read-title');
+const readCategory = document.getElementById("read-length");
+const readSubcategoryContainer = document.getElementById("read-subcategory-length");
+const readSubcategory = document.getElementById("read-pu-length-sub");
 
 readTitleInput.addEventListener('input', async (e) => {
     const titleVal = e.target.value.trim();
@@ -551,12 +554,30 @@ readTitleInput.addEventListener('input', async (e) => {
         //auto fill fields
         document.getElementById('read-author').value = book.author || "";
         document.getElementById('read-cover').value = book.cover_link || "";
- 
+        document.getElementById('read-pu-genre-genre').value = book.genre || "";
+        document.getElementById('read-pu-trope-genre').value = book.tropes || "";
+        
+        const lengthSelect = document.getElementById('read-length');
+        lengthSelect.value = book.length || "";
+
+        //const subcat = document.getElementById('read-subcategory-length');
+        if (book.length === 'serie') {
+            readSubcategoryContainer.style.display = "block";
+            document.getElementById('read-pu-saga-name').value = book.saga || "";
+            document.getElementById('read-pu-prog-value').value = book.serie_position || "";
+            document.getElementById('read-pu-length-value').value = book.saga_total_books || "";
+            document.getElementById('read-pu-length-sub').value = book.status ? "completed" : "in-progress";
+        } else {
+            readSubcategoryContainer.style.display = "none";
+        }
     }
 });
 
 readPopBtn.addEventListener("click", () => {
   popupRead.style.display = "flex"; 
+  readSubcategoryContainer.style.display = "none";
+  loadGenreSuggestions();
+  loadAuthorSuggestions();
   loadTitleSuggestions();
 });
 
@@ -579,6 +600,9 @@ sendBtnCur.addEventListener("click", async (e) => {
     const endDate = document.getElementById('read-end').value;
     const starsValue = document.getElementById('read-rate').value;
     const cover = document.getElementById('read-cover').value.trim(); 
+    const genre = document.getElementById('read-pu-genre-genre').value.trim();
+    const tropes = document.getElementById('read-pu-trope-genre').value.trim();
+    const lengthType = document.getElementById('read-length').value; // 'serie' or 'standalone'
 
     let stars = parseFloat(starsValue);
 
@@ -597,10 +621,24 @@ sendBtnCur.addEventListener("click", async (e) => {
 
     if (!title || !author || !endDate) return alert("Missing data!");
 
+    let statusBool = true; 
+    let sagaName = null;
+    let seriePos = null;
+    let sagaLength = null;
+
+    if (lengthType === 'serie') {
+        const statusVal = document.getElementById('read-pu-length-sub').value;
+        statusBool = (statusVal === 'completed'); // true if 'completed', false otherwise
+        
+        sagaLength = document.getElementById('read-pu-length-value').value.trim();
+        sagaName = document.getElementById('read-pu-saga-name').value.trim();
+        seriePos = document.getElementById('read-pu-prog-value').value;
+    }
     try {
         
-        let { data: book } = await sbAuth.from('Books')
-            .select('ID, cover_link')
+        let { data: book } = await sbAuth
+            .from('Books')
+            .select('ID')
             .ilike('title', title)
             .ilike('author', author)
             .eq('user_id', user.id)
@@ -609,10 +647,23 @@ sendBtnCur.addEventListener("click", async (e) => {
         let bookId;
         if (!book) {
             
-            const { data: newB } = await sbAuth.from('Books')
-                .insert([{ title, author, cover_link: cover }])
+            const { data: newB, error: bErr } = await sbAuth.from('Books')
+                .insert([{ 
+                title: title, 
+                author: author, 
+                genre: genre,
+                tropes: tropes,
+                length: lengthType, 
+                saga: sagaName, 
+                serie_position: seriePos, 
+                saga_total_books: sagaLength, 
+                cover_link: cover,
+                status: statusBool,
+                user_id: user.id //
+                }])
                 .select()
                 .single();
+                if (bErr) throw bErr;
             bookId = newB.ID;
         } else {
             bookId = book.ID;
@@ -704,6 +755,24 @@ sendBtnStat.addEventListener("click", async (e) => {
 
     popupStat.style.display = "none";
 });
+
+readCategory.addEventListener("change", () => {
+    const value = readCategory.value;
+
+    if (value === "serie") {
+        readSubcategoryContainer.style.display = "block";
+        readSubcategory.innerHTML = `
+            <option value="">-- Select --</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+             `;
+    } else {
+        readSubcategoryContainer.style.display = "none";
+        readSubcategory.innerHTML = "<option value=''>-- Select --</option>";
+    }
+
+});
+
 //--------POPUP BUY----------
 
 const popupBuy = document.getElementById("popupBuy");
