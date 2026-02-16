@@ -20,14 +20,18 @@ async function updateTopThree(bookId, newRank) {
     // if #2: old 2 -> 3.
     
     if (newRank === 1) {
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);;
-        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year).eq('user_id', user.id);;
+        await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);
+        await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year).eq('user_id', user.id);
+        //await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
+        
     } else if (newRank === 2) {
-        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);;
+        await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
+        await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id); 
     }
 
-    await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);; 
-    await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year).eq('user_id', user.id);;
+    //await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);
+    //await sbAuth.from('Top_3_Year').delete().eq('rank', newRank).eq('year', year).eq('user_id', user.id);
 
     const { error } = await sbAuth.from('Top_3_Year').insert([{ 
         book_id: bookId, 
@@ -435,7 +439,7 @@ sendBtnTbr.addEventListener("click", async (e) => {
                 length: lengthType, 
                 saga: sagaName, 
                 serie_position: seriePos, 
-                saga_total_books: length, 
+                saga_total_books: sagaLength, 
                 cover_link: cover,
                 status: statusBool,
                 user_id: user.id // 
@@ -529,9 +533,31 @@ const popupStat = document.getElementById("popup-stat");
 const closeStatBtn = document.getElementById("close-stat-popup");
 const sendBtnStat = document.getElementById("send-stats")
 const statForm = document.getElementById("cascade-form");
+const readTitleInput = document.getElementById('read-title');
+
+readTitleInput.addEventListener('input', async (e) => {
+    const titleVal = e.target.value.trim();
+    
+    if (titleVal.length < 2) return; 
+
+    const { data: book, error } = await sbAuth
+        .from('Books')
+        .select('*')
+        .eq('user_id', user.id)
+        .ilike('title', titleVal) // Case insensitive
+        .maybeSingle();
+
+    if (book) {
+        //auto fill fields
+        document.getElementById('read-author').value = book.author || "";
+        document.getElementById('read-cover').value = book.cover_link || "";
+ 
+    }
+});
 
 readPopBtn.addEventListener("click", () => {
   popupRead.style.display = "flex"; 
+  loadTitleSuggestions();
 });
 
 closeCurBtn.addEventListener("click", () => {
@@ -574,19 +600,28 @@ sendBtnCur.addEventListener("click", async (e) => {
     try {
         
         let { data: book } = await sbAuth.from('Books')
-            .select('ID, cover_link').ilike('title', title).ilike('author', author).eq('user_id', user.id).maybeSingle();
+            .select('ID, cover_link')
+            .ilike('title', title)
+            .ilike('author', author)
+            .eq('user_id', user.id)
+            .maybeSingle();
         
         let bookId;
         if (!book) {
             
             const { data: newB } = await sbAuth.from('Books')
-                .insert([{ title, author, cover_link: cover }]).select().single();
+                .insert([{ title, author, cover_link: cover }])
+                .select()
+                .single();
             bookId = newB.ID;
         } else {
             bookId = book.ID;
             
             if (!book.cover_link && cover) {
-                await sbAuth.from('Books').update({ cover_link: cover }).eq('ID', bookId).eq('user_id', user.id);
+                await sbAuth.from('Books')
+                .update({ cover_link: cover })
+                .eq('ID', bookId)
+                .eq('user_id', user.id);
             }
         }
         
