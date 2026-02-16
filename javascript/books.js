@@ -290,6 +290,7 @@ resetBtn.addEventListener("click", () => {
     input.value = "";
     datalist.innerHTML = ""; 
     formContainer.style.display = "none";
+    displayedBooks = [...currentBooksList];
     renderTable(currentBooksList);
 });
 
