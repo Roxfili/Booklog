@@ -183,6 +183,9 @@ function applyCurrentFilter() {
             if (type === "bought") {
                 const hasBought = book.price !== null && book.price !== undefined;
                 return value === "yes" ? hasBought : !hasBought;
+            }else if (type === "read") {
+                const hasRead = book.Read && book.Read.length > 0;
+                return value === "yes" ? hasRead : !hasRead;
             }
             
             const fieldValue = (type === "serie" ? book.saga : book[type]) || "";
@@ -239,7 +242,10 @@ filterSelect.addEventListener("change", () => {
         );
 
         options = [...new Set(individualTropes)];
-    }else {
+    }else if(type === "read"){
+        options = ["Yes", "No"];
+    }else{
+    
         options = [...new Set(currentBooksList.map(b => b[type]))].filter(Boolean);
     }
     options.sort();
