@@ -366,6 +366,8 @@ tbrTitleInput.addEventListener('input', async (e) => {
             subcat.style.display = "none";
         }
     }
+    
+
 });
 
 tbrPopBtn.addEventListener("click", () => {
@@ -458,17 +460,33 @@ sendBtnTbr.addEventListener("click", async (e) => {
             .eq('user_id', user.id)
             .maybeSingle();
 
-        // Insert only if not already there
-        if (!sameLinkEntry) {
-            await sbAuth.from('TBR').insert([{
-            book_id: bookId,
-            link: link,
-            user_id: user.id, 
-            add_date: new Date().toISOString().split('T')[0]
-            }]);
-        } else {
-            alert("This book with this link has already been added");
+        // Check if already read 
+        const { data: readBook } = await sbAuth
+            .from('Read')
+            .select('ID')
+            .eq('book_id', bookId)
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+        // Insert only if not already there with same link or not already read
+        if(readBook){
+            await sbAuth.from('Read').update({ is_from_tbr: true }).eq('book_id', bookId).eq('user_id', user.id);
+            alert("This book has already been read");
+            return;
         }
+
+        if(sameLinkEntry){
+            alert("This book with this link has already been added");
+            return;
+        }
+        
+        await sbAuth.from('TBR').insert([{
+        book_id: bookId,
+        link: link,
+        user_id: user.id, 
+        add_date: new Date().toISOString().split('T')[0]
+        }]);
+        
 
         // UI Feedback e Reset 
         const judgyMessage = document.getElementById('judgy-message-text');
@@ -482,10 +500,9 @@ sendBtnTbr.addEventListener("click", async (e) => {
         document.getElementById('subcategory-length').style.display = "none";
         popupTbr.style.display = "none";
         judgyPop.style.display = "flex";
-
     } catch (err) {
-        console.error("Errorr:", err.message);
-        alert("Error in saving");
+        console.error("Error:", err.message);
+        alert("Ops! Something went wrong in adding to TBR.");
     }
 });
 
@@ -774,7 +791,7 @@ readCategory.addEventListener("change", () => {
 });
 
 //--------POPUP BUY----------
-
+//ONLY BUY WHAT YOU ARLEADY READ (BC I MEAN... WHY BUY A BOOK YOU HAVEN'T EVEN READ YET??) SO NO NEW STUFF, JUST PRICE AND DATE FOR BOOKS ALREADY IN READ (OR TBR IF YOU WANT TO BUY BEFORE READING, BUT STILL NO NEW BOOKS ADDED FROM THIS FORM)
 const popupBuy = document.getElementById("popupBuy");
 const openBuyBtn = document.getElementById("open-buy-popup");
 const closeBuyBtn = document.getElementById("close-buy-popup");

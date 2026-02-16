@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/Roxfili/Booklog#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.93.3",
+    "@supabase/supabase-js": "^2.95.3",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
