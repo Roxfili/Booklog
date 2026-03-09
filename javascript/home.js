@@ -5,13 +5,32 @@ import { updatePodium, updateBubbleCounts, updateMonthFav } from './recap.js';
 
 let currentNewBookId = null;
 let currentNewBookTitle = "";
-const { data: { user } } = await sbAuth.auth.getUser();
+let user = null;
+//let { data: { user } } = await sbAuth.auth.getUser();
 //---------- FUNCTIONS CALLS ------------
-
-updateDashboardCounts();
-updateLastRead();
-
+checkUserAndInit();
+// updateDashboardCounts();
+// updateLastRead();
 //---------- FUNCTIONS DEFS ------------
+
+async function checkUserAndInit() {
+    const { data: { session } } = await sbAuth.auth.getSession();
+
+    if (!session) {
+        console.log("Nessuna sessione: vado al login...");
+        window.location.href = "login.html";
+        return; // IMPORTANTE: ferma l'esecuzione qui
+    }
+
+    user = session.user;
+    console.log("Utente loggato con successo:", user.id);
+
+    
+    updateDashboardCounts();
+    updateLastRead();
+    
+}
+
 
 async function updateTopThree(bookId, newRank) {
     const year = new Date().getFullYear();
@@ -19,16 +38,16 @@ async function updateTopThree(bookId, newRank) {
     // if #1: old 1 -> 2, old 2 -> 3.
     // if #2: old 2 -> 3.
     
-    if (newRank === 1) {
+    if (newRank == 1) {
         await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
         await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);
         await sbAuth.from('Top_3_Year').update({ rank: 2 }).eq('rank', 1).eq('year', year).eq('user_id', user.id);
         
-    } else if (newRank === 2) {
+    } else if (newRank == 2) {
         await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
         await sbAuth.from('Top_3_Year').update({ rank: 3 }).eq('rank', 2).eq('year', year).eq('user_id', user.id);
-    } else if (newRank === 3) {
-        await sbAuth.from('Top_3_Year').delete().gt('rank', 3).eq('year', year).eq('user_id', user.id);
+    } else if (newRank == 3) {
+        await sbAuth.from('Top_3_Year').delete().eq('rank', 3).eq('year', year).eq('user_id', user.id);
     }
 
   
@@ -733,42 +752,52 @@ sendBtnCur.addEventListener("click", async (e) => {
 // ----- POP UP STAT  -----
 sendBtnStat.addEventListener("click", async (e) => {
     e.preventDefault();
+    console.log("Pulsante cliccato!");
     
     const r1 = document.querySelector('input[name="q1"]:checked')?.value;
     const r2 = document.querySelector('input[name="q2"]:checked')?.value;
     const r3 = document.querySelector('input[name="q3"]:checked')?.value;
 
     const year = new Date().getFullYear();
-    const { data: top3 } = await sbAuth.from('Top_3_Year').select('rank').eq('year', year).eq('user_id', user.id);
-    const count = top3.length;
+    try{
+        const { data: top3 } = await sbAuth.from('Top_3_Year').select('rank').eq('year', year).eq('user_id', user.id);
+    
+        const count = top3.length;
 
-    let finalRank = null;
+        let finalRank = null;
 
-    if (count === 0) {
-        if (r1 === 'yes') finalRank = 1;
-    } 
-    else if (count === 1) {
-        finalRank = (r1 === 'yes') ? 1 : 2;
-    }
-    else if (count === 2) {
-        if (r1 === 'no') finalRank = 3;
-        else if (r2 === 'no') finalRank = 2;
-        else finalRank = 1;
-    }
-    else { // count === 3
-        if (r1 === 'yes') {
-            finalRank = 3;
-            if (r2 === 'yes') {
-                finalRank = 2;
-                if (r3 === 'yes') finalRank = 1;
+        if (count === 0) {
+            if (r1 === 'yes') finalRank = 1;
+        } 
+        else if (count === 1) {
+            finalRank = (r1 === 'yes') ? 1 : 2;
+        }
+        else if (count === 2) {
+            if (r1 === 'no') finalRank = 3;
+            else if (r2 === 'no') finalRank = 2;
+            else finalRank = 1;
+        }
+        else { // count === 3
+            if (r1 === 'yes') {
+                finalRank = 3;
+                if (r2 === 'yes') {
+                    finalRank = 2;
+                    if (r3 === 'yes') finalRank = 1;
+                }
             }
         }
+        console.warn(finalRank)
+        if (finalRank) {
+            console.warn(finalRank)
+            await updateTopThree(currentNewBookId, finalRank);
+            alert(`Book ranked at #${finalRank}!`);
+        }
+    
+    }catch (err) {
+        console.error("Error:", err.message);
+        alert("Ops! Something went wrong");
     }
-
-    if (finalRank) {
-        await updateTopThree(currentNewBookId, finalRank);
-        alert(`Book ranked at #${finalRank}!`);
-    }
+    
 
     popupStat.style.display = "none";
 });

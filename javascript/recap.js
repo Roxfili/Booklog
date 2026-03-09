@@ -2,15 +2,36 @@ import { sbAuth } from './auth_check.js';
 import { renderStars, formatShortDate } from './utils.js';
 
 const currYear = new Date().getFullYear();
-const { data: { user } } = await sbAuth.auth.getUser();
-
+//const { data: { user } } = await sbAuth.auth.getUser();
+let user = null;
 //----------- FUNCS CALLS -----------
-
-updateBubbleCounts();
-updatePodium();
-updateMonthFav();
+if (window.location.pathname.includes("recap.html")) {
+    checkUserAndInit();
+}
+// updateBubbleCounts();
+// updatePodium();
+// updateMonthFav();
 
 //----------- RECAP BUBBLES -----------
+
+export async function checkUserAndInit() {
+    const { data: { session } } = await sbAuth.auth.getSession();
+
+    if (!session) {
+        console.log("Nessuna sessione: vado al login...");
+        window.location.href = "login.html";
+        return; // IMPORTANTE: ferma l'esecuzione qui
+    }
+
+    user = session.user;
+    console.log("Utente loggato con successo:", user.id);
+
+    
+    updateBubbleCounts();
+    updatePodium();
+    updateMonthFav();
+    
+}
 
 export async function updateBubbleCounts() {
     try {
@@ -87,14 +108,16 @@ export async function updatePodium() {
         ]);
         const books = [book1, book2, book3];
         books.forEach((book, i) => {
+            
             const n = i + 1;
+            console.warn(`podium-image${n}`);
             const imgEl = document.getElementById(`podium-image${n}`);
             const titleEl = document.getElementById(`podium-title${n}`);
             const authorEl = document.getElementById(`podium-author${n}`);
             const datesEl = document.getElementById(`podium-dates${n}`);
             const rateEl = document.getElementById(`podium-rate${n}`);
             if (book) {
-                imgEl.src = book.cover_link || 'img/caraval_cover.jpg';
+                imgEl.src = book ? (book.cover_link || 'img/placeholder.jpg') : 'img/placeholder.jpg';
                 titleEl.textContent = book.title;
                 authorEl.textContent = book.author;
                 const readData = book.Read.find(r => r.user_id === user.id) || book.Read[0];
@@ -106,7 +129,7 @@ export async function updatePodium() {
                 }
             } else {
                 titleEl.textContent = "TBD";
-                imgEl.src = 'img/caraval_cover.jpg';
+                imgEl.src = 'img/placeholder.jpg';
                 authorEl.textContent = "Author";
                 datesEl.textContent = "Date";
                 rateEl.innerHTML = renderStars(0);
@@ -159,10 +182,16 @@ export async function updateMonthFav() {
             const n = i + 1; 
 
             if (book) {
-                document.getElementById(`fav-img${n}`).src = book.cover_link || 'img/caraval_cover.jpg';
-                document.getElementById(`fav-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
+                
+                console.warn(`fav-img${n}`);
+                console.warn(`fav-rate${n}`);
+
+                // document.getElementById(`fav-img${n}`).src = book.cover_link || 'img/placeholder.jpg';
+                // document.getElementById(`fav-rate${n}`).innerHTML = renderStars(book.Read[0].stars);
+                document.getElementById(`fav-img${n}`).src = book ? (book.cover_link || 'img/placeholder.jpg') : 'img/placeholder.jpg';
+                document.getElementById(`fav-rate${n}`).innerHTML = book ? (renderStars(book.Read[0].stars)) : renderStars(0);
             } else {
-                document.getElementById(`fav-img${n}`).src = 'img/caraval_cover.jpg';
+                document.getElementById(`fav-img${n}`).src = 'img/placeholder.jpg';
                 document.getElementById(`fav-rate${n}`).innerHTML = renderStars(0);
             
             }
